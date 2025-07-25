@@ -1,8 +1,8 @@
-// src/api/axiosClient.js
+// src/api/AxiosClient.js
 import axios from 'axios';
 
-const axiosClient = axios.create({
+const AxiosClient = axios.create({
   baseURL: 'https://invanorbackend-production.up.railway.app/api/v1',
 });
 // https://invanorbackend-production.up.railway.app/
-export default axiosClient;
+export default AxiosClient;
