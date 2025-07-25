@@ -1,30 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { LogIn } from "lucide-react"; // Icon login dari lucide
+import { LogIn } from "lucide-react";
 
 const LoginText = () => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: -50, scale: 0.5 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{
-        type: "spring",
-        stiffness: 500,
-        damping: 20,
-        mass: 1,
-      }}
-      whileHover={{ scale: 1.1 }}
+      whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className=" relative flex items-center px-4 py-2 space-x-2 overflow-hidden text-[12px] italic tracking-wide  transition-all duration-100 border rounded-full cursor-pointer md:px-6 md:py-2 md:text-sm border-invaPurple font-satoshi  group "
+      className="relative flex items-center px-5 py-2 md:px-6 md:py-2.5 space-x-2 overflow-hidden text-xs md:text-sm text-white border border-[#5B73F2]/40 bg-[#5B73F2]/30 rounded-3xl cursor-pointer transition-all duration-300 group backdrop-blur-sm"
     >
-      {/* Ripple Fill Effect */}
-      <span className="absolute inset-0 w-0 h-0 bg-white  rounded-full group-hover:w-72 group-hover:h-72 group-hover:opacity-40 transition-all duration-700 ease-out transform group-hover:scale-150 drop-shadow-[0_0_8px_#FF4FCB]"></span>
+      {/* Ripple hover effect */}
+      <span className="absolute inset-0 w-0 h-0 bg-white rounded-full opacity-0 group-hover:w-[50%] group-hover:h-[180%] group-hover:opacity-20 transition-all duration-700 ease-out transform group-hover:scale-150 drop-shadow-[0_0_8px_#5B73F2]" />
 
-      {/* Icon Login */}
-      <LogIn  className="relative z-10 md:size-[13px] size-[12px] text-black " />
+      {/* Icon */}
+      <LogIn className="relative z-10 text-white size-[16px]" />
 
-      {/* Button Text */}
-      <span className="relative z-10 text-black transition-all duration-300P">
+      {/* Text */}
+      <span className="relative z-10 italic font-light tracking-wide">
         Login
       </span>
     </motion.div>

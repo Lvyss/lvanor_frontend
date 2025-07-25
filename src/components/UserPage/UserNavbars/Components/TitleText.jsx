@@ -21,16 +21,16 @@ const TitleText = ({ text }) => {
       filter: 'blur(0px)',
       transition: {
         type: 'spring',
-        damping: 12,
-        stiffness: 100,
-        delay: 0.1 * i, // delay manual per huruf
+        damping: 10,
+        stiffness: 200,
+        delay: 0.03 * i, // lebih cepat per huruf
       },
     }),
   };
 
   return (
     <motion.div
-      className="flex space-x-[0.5px] font-atiqua text-[18px] md:text-2xl tracking-normal"
+      className="text-white flex space-x-[0.5px] font-atiqua text-[18px] md:text-2xl tracking-normal"
       variants={container}
       initial="hidden"
       animate="visible"
@@ -38,7 +38,7 @@ const TitleText = ({ text }) => {
       {letters.map((letter, index) => (
         <motion.span
           key={index}
-          custom={letters.length - index - 1} // bikin delay-nya kebalik
+          custom={letters.length - index - 1}
           variants={child}
           initial="hidden"
           animate="visible"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TitleText from "./Components/TitleText";
-import NavbarText from "./Components/NavbarText";
+import MenuText from "./Components/MenuText";
 import LoginText from "./Components/LoginText";
 import ToggleButton from "./Components/ToogleButton";
 import MobileMenu from "./Components/MobileMenu";
@@ -95,7 +95,8 @@ const UserNavbar = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -80, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed top-0 z-50 flex items-center justify-between w-full  py-[1.5%] shadow-lg px-[5%] backdrop-blur-[1px]"
+            className="fixed top-0 z-50 flex items-center justify-between w-full py-[1.5%] shadow-lg px-[5%] backdrop-blur-[5px] border-b border-white/50"
+
           >
             {/* Logo */}
             <div className="flex items-center space-x-3 cursor-pointer font-antiqua">
@@ -109,7 +110,7 @@ const UserNavbar = () => {
 
             {/* Menu Tengah */}
             <div className="items-center hidden space-x-8 md:flex">
-              <NavbarText
+              <MenuText
                 activePage={activePage}
                 setActivePage={setActivePage}
               />

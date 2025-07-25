@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useMemo } from "react";
-import axiosClient from "./axiosClient";
+import AxiosClient from "./AxiosClient";
 import { toast } from "react-toastify";
 
 export const AuthApi = createContext();
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
 
   // 🔸 Axios Interceptor: Auto logout jika token expired
   useEffect(() => {
-    const interceptor = axiosClient.interceptors.response.use(
+    const interceptor = AxiosClient.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       }
     );
 
-    return () => axiosClient.interceptors.response.eject(interceptor);
+    return () => AxiosClient.interceptors.response.eject(interceptor);
   }, []);
 
   // 🔸 Cek token di localStorage saat pertama buka aplikasi
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       const role = storedUser?.role;
       const url = role === "admin" ? "/admin/profile" : "/user/profile";
 
-      const response = await axiosClient.get(url, {
+      const response = await AxiosClient.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -100,7 +100,7 @@ const apiRequest = async (url, method, data = {}, isFormData = false) => {
       ...(method === "GET" ? {} : { data }),
     };
 
-    const response = await axiosClient(config);
+    const response = await AxiosClient(config);
     return response.data;
   } finally {
     setLoading(false);
