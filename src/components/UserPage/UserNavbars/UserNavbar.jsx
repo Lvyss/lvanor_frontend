@@ -95,7 +95,7 @@ const UserNavbar = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -80, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed top-0 z-50 flex items-center justify-between w-full px-4 py-4 shadow-lg md:px-[70px] backdrop-blur-[1px]"
+            className="fixed top-0 z-50 flex items-center justify-between w-full  py-[1.5%] shadow-lg px-[5%] backdrop-blur-[1px]"
           >
             {/* Logo */}
             <div className="flex items-center space-x-3 cursor-pointer font-antiqua">
