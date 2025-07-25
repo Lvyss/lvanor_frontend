@@ -60,41 +60,40 @@ const UserProfile = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append('_method', 'PUT'); // override jadi PUT
 
-    // Tambahkan hanya field yang berubah atau berisi
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === 'profile_picture') {
-        if (profilePictureChanged && value instanceof File) {
-          formData.append(key, value);
-        }
-      } else {
-        const originalValue = originalForm[key] || '';
-        const trimmed = value?.toString().trim();
-
-        // Jangan kirim jika tidak ada perubahan & tidak kosong
-        if (trimmed && trimmed !== originalValue) {
-          formData.append(key, trimmed);
-        }
+  Object.entries(form).forEach(([key, value]) => {
+    if (key === 'profile_picture') {
+      if (profilePictureChanged && value instanceof File) {
+        formData.append(key, value);
       }
-    });
-
-    if (!formData.has('profile_picture') && formData.keys().next().done) {
-      toast.info('⚠️ Tidak ada perubahan yang dikirim.');
-      return;
+    } else {
+      const originalValue = originalForm[key] || '';
+      const trimmed = value?.toString().trim();
+      if (trimmed && trimmed !== originalValue) {
+        formData.append(key, trimmed);
+      }
     }
+  });
 
-    try {
-      await apiRequest('/profile/update', 'PUT', formData, true);
-      toast.success('✅ Profil berhasil diperbarui!');
-      fetchProfile();
-    } catch (error) {
-      console.error('❌ Gagal update profil:', error);
-      toast.error('❌ Update gagal: ' + (error.response?.data?.message || error.message));
-    }
-  };
+  if (!formData.has('profile_picture') && formData.keys().next().done) {
+    toast.info('⚠️ Tidak ada perubahan yang dikirim.');
+    return;
+  }
+
+  try {
+    await apiRequest('/profile/update', 'POST', formData, true); // tetap pakai POST
+    toast.success('✅ Profil berhasil diperbarui!');
+    fetchProfile();
+  } catch (error) {
+    console.error('❌ Gagal update profil:', error);
+    toast.error('❌ Update gagal: ' + (error.response?.data?.message || error.message));
+  }
+};
+
 
   if (loading) {
     return (
