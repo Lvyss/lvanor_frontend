@@ -68,8 +68,8 @@ const UserHome = () => {
       md:w-[100%] md:h-[100%]
       md:rounded-lg 
       opacity-30 md:opacity-100
-      scale-[2] translate-x-[35%]
-      translate-y-[4%]
+      scale-[1.4] translate-x-[25%]
+      translate-y-[8%]
       md:scale-100 md:translate-x-0
       pointer-events-none
     "
