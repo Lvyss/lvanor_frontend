@@ -64,17 +64,19 @@ const UserHome = () => {
     src="https://my.spline.design/untitled-j1jPSS2tv357Jxqskcr4PXve/"
     frameBorder="0"
     className="
-      w-[140%] h-[140%] 
-      md:w-[100%] md:h-[100%] 
+      w-[200%] h-[200%]
+      md:w-[100%] md:h-[100%]
       md:rounded-lg 
       opacity-30 md:opacity-100
-      scale-[1.4] -translate-x-[20%] 
+      scale-[2] translate-x-[35%]
+      translate-y-[4%]
       md:scale-100 md:translate-x-0
-      pointer-events-none  // supaya tidak menghalangi klik elemen lain
+      pointer-events-none
     "
     allow="autoplay; fullscreen"
   ></iframe>
 </div>
+
 
       </div>
     </section>
