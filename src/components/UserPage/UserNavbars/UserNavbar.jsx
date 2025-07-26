@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TitleText from "./Components/TitleText";
 import MenuText from "./Components/MenuText";
-import LoginText from "./Components/LoginText";
+import LoginLogoutButton from "./Components/LoginLogoutButton";
 import ToggleButton from "./Components/ToogleButton";
 import MobileMenu from "./Components/MobileMenu";
 import FloatingLogo from "./Components/FloatingLogo";
@@ -26,20 +26,23 @@ const UserNavbar = () => {
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
 
   // Scroll Navbar
-  const handleScroll = () => {
-    if (isMenuOpen) return;
-    if (window.scrollY > lastScrollY) {
-      clearTimeout(timeoutId);
-      const newTimeoutId = setTimeout(() => {
-        setShowNavbar(false);
-      }, 300);
-      setTimeoutId(newTimeoutId);
-    } else {
-      setShowNavbar(true);
-      clearTimeout(timeoutId);
-    }
-    setLastScrollY(window.scrollY);
-  };
+const handleScroll = () => {
+  if (isMenuOpen) return;
+
+  if (window.scrollY > lastScrollY) {
+    clearTimeout(timeoutId);
+    const newTimeoutId = setTimeout(() => {
+      setShowNavbar(false);
+    }, 50); // 🔧 dipercepat
+    setTimeoutId(newTimeoutId);
+  } else {
+    setShowNavbar(true);
+    clearTimeout(timeoutId);
+  }
+
+  setLastScrollY(window.scrollY);
+};
+
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -66,14 +69,14 @@ const UserNavbar = () => {
   // Logout Universal
   const handleLogout = async () => {
     await logout(); // 🔥 Pakai logout universal
-    sessionStorage.setItem('showLogoutPopup', 'true');
-    window.location.href = '/';
+    sessionStorage.setItem("showLogoutPopup", "true");
+    window.location.href = "/";
   };
 
   // Tampilkan popup kalau ada flag
   useEffect(() => {
-    const shouldShowPopup = sessionStorage.getItem('showLogoutPopup');
-    if (shouldShowPopup === 'true') {
+    const shouldShowPopup = sessionStorage.getItem("showLogoutPopup");
+    if (shouldShowPopup === "true") {
       setShowLogoutPopup(true);
     }
   }, []);
@@ -81,7 +84,7 @@ const UserNavbar = () => {
   // Tutup popup
   const handleLogoutNavigate = () => {
     setShowLogoutPopup(false);
-    sessionStorage.removeItem('showLogoutPopup');
+    sessionStorage.removeItem("showLogoutPopup");
   };
 
   return (
@@ -95,47 +98,78 @@ const UserNavbar = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -80, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed top-0 z-50 flex items-center justify-between w-full py-[1.5%] shadow-lg px-[5%] backdrop-blur-[5px] border-b border-white/50"
-
+            className="fixed top-0 z-50 w-full py-[4%] md:py-[1.5%] shadow-lg px-[5%] backdrop-blur-[5px] border-b border-white/20 "
           >
-            {/* Logo */}
-            <div className="flex items-center space-x-3 cursor-pointer font-antiqua">
-              <img
-                src="/images/logo.png"
-                alt="Logo"
-                className="w-7 h-7 md:w-10 md:h-10 animate-spin-slow"
-              />
-              <TitleText text="INVANOR" />
+            {/* === 🖥️ Desktop Layout === */}
+            <div className="hidden md:flex items-center justify-between w-full">
+              {/* Kiri */}
+              <div className="flex items-center space-x-3 font-antiqua cursor-pointer">
+                <img
+                  src="/images/logo.png"
+                  alt="Logo"
+                  className="w-7 h-7 md:w-10 md:h-10 animate-spin-slow"
+                />
+                <TitleText text="LVANOR" />
+              </div>
+
+              {/* Tengah */}
+              <div className="flex items-center space-x-8">
+                <MenuText
+                  activePage={activePage}
+                  setActivePage={setActivePage}
+                />
+              </div>
+
+              {/* Kanan */}
+              <div className="flex items-center space-x-4">
+                {!auth.token ? (
+                  <Link to={routes.login}>
+                    <LoginLogoutButton
+                      type="login"
+                      onClick={handleLoginClick}
+                    />
+                  </Link>
+                ) : (
+                  <LoginLogoutButton type="logout" onClick={handleLogout} />
+                )}
+                <ToggleButton
+                  isOpen={isMenuOpen}
+                  toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
+                />
+              </div>
             </div>
 
-            {/* Menu Tengah */}
-            <div className="items-center hidden space-x-8 md:flex">
-              <MenuText
-                activePage={activePage}
-                setActivePage={setActivePage}
-              />
-            </div>
+            {/* === 📱 Mobile Layout === */}
+            <div className="flex items-center justify-between w-full md:hidden">
+              {/* Kiri: Menu & Logo */}
+              <div className="flex items-center space-x-3">
+                <ToggleButton
+                  isOpen={isMenuOpen}
+                  toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
+                />
+                <div className="flex items-center space-x-2">
+                  <img
+                    src="/images/logo.png"
+                    alt="Logo"
+                    className="w-10 h-10 animate-spin-slow"
+                  />
+                  <TitleText text="LVANOR" />
+                </div>
+              </div>
 
-            {/* Kanan */}
-            <div className="flex items-center space-x-4">
-              {!auth.token ? ( // 🔥 Pakai auth universal
-                <Link to={routes.login}>
-                  <div onClick={handleLoginClick}>
-                    <LoginText />
-                  </div>
-                </Link>
-              ) : (
-                <button
-                  onClick={handleLogout}
-                  className="px-3 py-1 bg-red-500 rounded"
-                >
-                  Logout
-                </button>
-              )}
-              <ToggleButton
-                isOpen={isMenuOpen}
-                toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
-              />
+              {/* Kanan: Login/Logout */}
+              <div>
+                {!auth.token ? (
+                  <Link to={routes.login}>
+                    <LoginLogoutButton
+                      type="login"
+                      onClick={handleLoginClick}
+                    />
+                  </Link>
+                ) : (
+                  <LoginLogoutButton type="logout" onClick={handleLogout} />
+                )}
+              </div>
             </div>
           </motion.nav>
         )}
@@ -147,7 +181,6 @@ const UserNavbar = () => {
         activePage={activePage}
       />
 
-
       {/* Floating Logo */}
       <FloatingLogo
         show={!showNavbar && !isLogoClicked}
@@ -158,7 +191,9 @@ const UserNavbar = () => {
       {showLogoutPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="max-w-sm p-6 text-center bg-white rounded-lg shadow-lg">
-            <h3 className="mb-4 text-xl font-bold text-green-600">Berhasil Logout</h3>
+            <h3 className="mb-4 text-xl font-bold text-green-600">
+              Berhasil Logout
+            </h3>
             <p className="mb-4">Anda telah berhasil keluar.</p>
             <button
               onClick={handleLogoutNavigate}

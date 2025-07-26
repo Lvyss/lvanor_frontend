@@ -1,13 +1,13 @@
 import React from "react";
-import { MoreVertical, X } from 'lucide-react';
+import { AlignLeft, AlignRight } from "lucide-react";
 
 const ToggleButton = ({ isOpen, toggleMenu }) => {
   return (
     <div className="md:hidden z-[999] cursor-pointer" onClick={toggleMenu}>
       {isOpen ? (
-        <X  className="text-black transition-transform duration-300 w-7 h-7" />
+        <AlignRight className="text-white transition-transform duration-300 w-8 h-8" />
       ) : (
-        <MoreVertical  className="text-black transition-transform duration-300 w-7 h-7" />
+        <AlignLeft className="text-white transition-transform duration-300 w-8 h-8" />
       )}
     </div>
   );

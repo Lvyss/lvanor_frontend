@@ -8,7 +8,7 @@ module.exports = {
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'], // untuk judul
           cinzel: ['Cinzel', 'sans-serif'], // untuk judul
-        antiqua: ['"Uncial Antiqua"', 'cursive'], // Judul INVANOR
+        antiqua: ['"Uncial Antiqua"', 'cursive'], // Judul LVANOR
         poppins: ['Poppins', 'sans-serif'], // Font standar untuk menu
       },
       animation: {

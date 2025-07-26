@@ -2,10 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  padding: 0;
+html, body, #root {
+  width: 100%;
   margin: 0;
+  padding: 0;
 }
+
 
 
 @font-face {
@@ -26,14 +28,21 @@ html, body {
     animation: spin 6s linear infinite;
   }
 
-  .animate-glow {
-    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5), 0 0 30px rgba(255, 0, 255, 0.3), 0 0 45px rgba(255, 0, 255, 0.2);
-    transition: box-shadow 0.3s ease;
-  }
+.animate-glow {
+  box-shadow:
+    0 0 15px rgba(91, 115, 242, 0.5),
+    0 0 30px rgba(91, 115, 242, 0.3),
+    0 0 45px rgba(91, 115, 242, 0.2);
+  transition: box-shadow 0.3s ease;
+}
 
-  .animate-glow:hover {
-    box-shadow: 0 0 25px rgba(255, 0, 255, 0.7), 0 0 50px rgba(255, 0, 255, 0.5), 0 0 75px rgba(255, 0, 255, 0.4);
-  }
+.animate-glow:hover {
+  box-shadow:
+    0 0 25px rgba(91, 115, 242, 0.7),
+    0 0 50px rgba(91, 115, 242, 0.5),
+    0 0 75px rgba(91, 115, 242, 0.4);
+}
+
 
 
   @keyframes gradientShift {

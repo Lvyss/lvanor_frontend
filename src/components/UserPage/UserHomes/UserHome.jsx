@@ -5,6 +5,26 @@ import { ArrowRight } from "lucide-react";
 const UserHome = () => {
   const [isSplineLoading, setIsSplineLoading] = useState(true);
 
+  const [showFooter, setShowFooter] = useState(true);
+const [lastScrollY, setLastScrollY] = useState(0);
+
+useEffect(() => {
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      setShowFooter(false); // scroll down
+    } else {
+      setShowFooter(true); // scroll up
+    }
+
+    setLastScrollY(currentScrollY);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, [lastScrollY]);
+
   // Fix: set --vh untuk viewport height yang akurat di mobile
   useEffect(() => {
     const setVH = () => {
@@ -65,6 +85,10 @@ const UserHome = () => {
           </motion.p>
 
           <motion.div
+            onClick={() => {
+              const el = document.getElementById("weblist");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.5 }}
@@ -74,9 +98,7 @@ const UserHome = () => {
           >
             <span className="absolute inset-0 w-0 h-0 bg-white rounded-full group-hover:w-[50%] group-hover:h-[500%] group-hover:opacity-30 transition-all duration-700 ease-out transform group-hover:scale-150 drop-shadow-[0_0_8px_#60A5FA]"></span>
             <ArrowRight className="relative z-10 text-white size-5" />
-            <a href="#weblist" className="relative z-10">
-              Jelajahi Sekarang
-            </a>
+            <button className="relative z-10">Jelajahi Sekarang</button>
           </motion.div>
         </div>
 
@@ -120,7 +142,13 @@ const UserHome = () => {
         </div>
 
         {/* Footer */}
-        <div className="absolute left-0 z-30 w-full bottom-4">
+        <motion.div
+  initial={{ opacity: 1, y: 0 }}
+  animate={showFooter ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+  className="absolute left-0 z-30 w-full bottom-4"
+>
+
           <div className="pl-[5%] pr-[5%] flex justify-between items-center text-white text-[10px] font-poppins uppercase tracking-widest">
             <p>TEMUKAN WEBSITE YANG TERASA SEPERTIMU.</p>
             <p>|| 2025</p>
@@ -136,7 +164,7 @@ const UserHome = () => {
               <span className="w-1 h-1 rounded-full bg-white/90" />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
