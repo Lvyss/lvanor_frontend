@@ -5,17 +5,29 @@ import { ArrowRight } from "lucide-react";
 const UserHome = () => {
   const [isSplineLoading, setIsSplineLoading] = useState(true);
 
+  // Fix: set --vh untuk viewport height yang akurat di mobile
+  useEffect(() => {
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    setVH();
+    window.addEventListener("resize", setVH);
+    return () => window.removeEventListener("resize", setVH);
+  }, []);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsSplineLoading(false);
-    }, 3000); // delay 3 detik
+    }, 3000);
     return () => clearTimeout(timeout);
   }, []);
 
   return (
     <section
       id="home"
-      className="relative w-full h-screen overflow-hidden bg-[linear-gradient(to_top,_rgb(99,144,204),_rgba(193,206,229,1))]"
+      className="relative w-full h-[calc(var(--vh,1vh)*100)] overflow-hidden bg-[linear-gradient(to_top,_rgb(99,144,204),_rgba(193,206,229,1))]"
     >
       <div className="relative z-20 flex flex-col items-center justify-between w-full h-full py-16 md:flex-row md:py-0">
         {/* Kiri */}
@@ -71,11 +83,11 @@ const UserHome = () => {
         {/* Kanan (Spline + Spinner) */}
         <div
           className="
-    w-full h-full 
-    md:w-[50%] md:relative
-    absolute top-0 left-0 z-0
-    flex items-center justify-center
-  "
+            w-full h-full 
+            md:w-[50%] md:relative
+            absolute top-0 left-0 z-0
+            flex items-center justify-center
+          "
         >
           {isSplineLoading ? (
             <div className="flex items-center justify-center w-full h-full">
@@ -85,23 +97,23 @@ const UserHome = () => {
           ) : (
             <motion.iframe
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }} // Hanya sampai 0.4
+              animate={{ opacity: 0.4 }}
               transition={{ duration: 1.0, ease: "easeInOut", delay: 0.5 }}
               src="https://my.spline.design/untitled-j1jPSS2tv357Jxqskcr4PXve/"
               frameBorder="0"
               className="
-        absolute top-0 left-0
-        w-full h-full 
-        md:relative 
-        md:w-[100%] md:h-[100%] 
-        md:rounded-lg 
-        md:opacity-100
-        opacity-40
-        scale-[1.4] translate-x-[20%] 
-        md:scale-100 md:translate-x-0
-        pointer-events-none
-        z-0
-      "
+                absolute top-0 left-0
+                w-full h-full 
+                md:relative 
+                md:w-[100%] md:h-[100%] 
+                md:rounded-lg 
+                md:opacity-100
+                opacity-40
+                scale-[1.4] translate-x-[20%] 
+                md:scale-100 md:translate-x-0
+                pointer-events-none
+                z-0
+              "
               allow="autoplay; fullscreen"
             />
           )}
@@ -116,11 +128,12 @@ const UserHome = () => {
 
           <div className="w-full h-[1px] bg-white/60 my-2" />
 
-          <div className="pl-[5%] flex justify-between items-center text-white text-[10px] font-poppins tracking-wider">
+          <div className="pl-[5%] pr-[5%] flex justify-between items-center text-white text-[10px] font-poppins tracking-wider">
             <p>GULIR UNTUK MENJELAJAHI</p>
             <div className="flex gap-2">
-              <span className="w-2 h-2 rounded-full bg-white/60" />
-              <span className="w-2 h-2 rounded-full bg-white/60" />
+              <span className="w-1 h-1 rounded-full bg-white/30" />
+              <span className="w-1 h-1 rounded-full bg-white/60" />
+              <span className="w-1 h-1 rounded-full bg-white/90" />
             </div>
           </div>
         </div>
