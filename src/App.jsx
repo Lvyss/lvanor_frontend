@@ -25,7 +25,6 @@ import AdminProfile from "./components/AdminPage/AdminProfiles/AdminProfile";
 import StartPage from "./components/UserPage/StartPage";
 import UserLayout from "./components/UserPage/UserLayout";
 import UserHomeWeblist from "./components/UserPage/UserHomeWeblist";
-import UserWebListDetail from "./components/UserPage/UserWebList/UserWebListDetail";
 import UserProfile from "./components/UserPage/UserProfiles/UserProfile";
 import UserWebUp from "./components/UserPage/UserWebUp/UserWebUp";
 import UserWebUpDetail from "./components/UserPage/UserWebUp/UserWebUpDetail";
@@ -116,10 +115,6 @@ function AppContent() {
           <Route
             path={routes.userWeblistEditDetail()}
             element={<UserWebUpDetail />}
-          />
-          <Route
-            path={routes.userWeblistDetailAll()}
-            element={<UserWebListDetail />}
           />
         </Route>
         <Route path="*" element={<NotFound />} />

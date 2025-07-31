@@ -9,6 +9,7 @@ module.exports = {
         satoshi: ['Satoshi', 'sans-serif'], // untuk judul
           cinzel: ['Cinzel', 'sans-serif'], // untuk judul
         antiqua: ['"Uncial Antiqua"', 'cursive'], // Judul LVANOR
+   mont: ['Montserrat', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'], // Font standar untuk menu
       },
       animation: {

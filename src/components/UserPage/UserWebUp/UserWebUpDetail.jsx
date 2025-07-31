@@ -33,7 +33,8 @@ const UserWebUpDetail = () => {
 
       setWeb(res.data);
       setDescription(detail.description || '');
-      setFeatures(detail.features ? JSON.parse(detail.features).join(', ') : '');
+      setFeatures(Array.isArray(detail.features) ? detail.features.join('\n') : '');
+
       setTechStack(detail.tech_stack || '');
       setPrice(detail.price || '');
       setWebsiteLink(detail.website_link || '');
@@ -51,7 +52,13 @@ const UserWebUpDetail = () => {
     try {
 await apiRequest(`my-weblist/${id}/detail`, 'POST', {
   ...(description && { description }),
-  ...(features && { features: features.split(',').map(f => f.trim()) }),
+...(features && {
+  features: features
+    .split('\n') // pisah per baris, bukan koma
+    .map(f => f.trim())
+    .filter(Boolean), // hilangkan baris kosong
+}),
+
   ...(techStack && { tech_stack: techStack }),
   ...(price && { price }), // biarkan 0 tetap dikirim
   ...(websiteLink && { website_link: websiteLink }),
