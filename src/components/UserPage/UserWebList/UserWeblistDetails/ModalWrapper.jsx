@@ -27,7 +27,7 @@ const ModalWrapper = ({ isOpen, onClose, children }) => {
           onClick={onClose}
           className="absolute z-[999] p-2 rounded-full shadow md:top-6 md:right-6 right-3 top-3 bg-black/80 hover:bg-[#6390cc]"
         >
-          <X className="w-4 h-4 text-white md:h-5 md:w-5" />
+          <X className="h-4 text-white w- md:h-5 md:w-5" />
         </button>
         {children}
       </motion.div>

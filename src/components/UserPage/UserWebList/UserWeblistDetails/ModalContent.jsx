@@ -38,7 +38,7 @@ const ModalContent = ({ data }) => {
       className="relative w-full max-h-screen overflow-y-auto shadow-xl"
     >
       <div className="pb-10 pt-14">
-        <h2 className="md:mr-[20%] md:ml-[20%] mr-[10%] ml-[10%] w-full text-2xl text-gray-900 break-words font-poppins">
+        <h2 className="md:pr-[20%] md:pl-[20%] pr-[10%] pl-[10%] w-full text-2xl text-gray-900 break-words font-poppins">
           {data.title}
         </h2>
 
@@ -169,7 +169,7 @@ const ModalContent = ({ data }) => {
         )}
 
         {/* Footer Info */}
-        <div className="mt-60 mb-60 mr-[10%] ml-[10%] text-center">
+        <div className="mt-60 mb-60 pr-[10%] pl-[10%] text-center">
           <div className="flex items-center justify-center gap-6">
             <div className="flex-1 h-[2px] bg-white/50" />
             <img
