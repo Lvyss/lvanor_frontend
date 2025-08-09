@@ -1,53 +1,61 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Heart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // untuk redirect login
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, Heart } from "lucide-react";
+import { AuthApi } from "../../LoginRegister/api/AuthApi";
+import { useNavigate } from "react-router-dom";
+import routes from "../../../routes";
+import Login from "../../LoginRegister/pages/Login"; // ✅ Import login popup
 
-// Data Produk
-const productsData = [
-  { id: 1, category: 'Portfolio', uploader: 'John Doe', profile: '/images/fynsec.png', image: '/images/fynsec.png', likes: 0 },
-  { id: 2, category: 'E-commerce', uploader: 'Jane Smith', profile: '/images/ocamba.png', image: '/images/ocamba.png', likes: 0 },
-  { id: 3, category: 'Landing Page', uploader: 'Alex Brown', profile: '/images/sapforce.png', image: '/images/sapforce.png', likes: 0 },
-  { id: 4, category: 'Company Profile', uploader: 'Lisa Green', profile: '/images/fynsec.png', image: '/images/fynsec.png', likes: 0 },
-  { id: 5, category: 'Portfolio', uploader: 'David Lee', profile: '/images/ocamba.png', image: '/images/ocamba.png', likes: 0 },
-  { id: 6, category: 'Event', uploader: 'Emma White', profile: '/images/sapforce.png', image: '/images/sapforce.png', likes: 0 },
-];
-
-const category = ['All', 'Portfolio', 'E-commerce', 'Landing Page', 'Company Profile', 'Event'];
-
-const UserWebListBeforeLogin = () => {
-  const [products, setProducts] = useState(productsData);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [visibleCount, setVisibleCount] = useState(6);
+const UserWebList = () => {
+  const navigate = useNavigate();
+  const { publicRequest } = useContext(AuthApi);
+  const [weblist, setWeblist] = useState([]);
+  const [category, setCategory] = useState(["All"]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(4);
   const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
   const buttonsRef = useRef({});
-  
-  const navigate = useNavigate();
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // ✅ Popup state
 
-  // Simulasi status login
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Ganti jadi 'true' kalau user sudah login
+  useEffect(() => {
+    fetchWeblist();
+    fetchCategory();
+  }, []);
 
-  const filteredProducts = selectedCategory === 'All'
-    ? products
-    : products.filter(product => product.category === selectedCategory);
+const fetchWeblist = async () => {
+  try {
+    const response = await publicRequest("explore-weblist", "GET");
+    if (response && response.data) {
+      const weblist = response.data.map((item) => ({
+        id: item.id,
+        title: item.title,
+        category: item.category?.name || "Unknown",
+        uploader: item.user?.detail?.username || "Anonymous", // 👈 gunakan username dari user detail
+        profile: item.user?.detail?.profile_picture || "/images/default-profile.png", // 👈 ambil profile pic dari detail
+        image: item.image_path,
+      }));
+      setWeblist(weblist);
+    }
+  } catch (error) {
+    console.error("Gagal mengambil data weblist:", error);
+  }
+};
 
-  const visibleProducts = filteredProducts.slice(0, visibleCount);
-
-  const handleLike = (id) => {
-    if (!isLoggedIn) return; // Blokir like kalau belum login
-    const updatedProducts = products.map(product =>
-      product.id === id ? { ...product, likes: product.likes + 1 } : product
-    );
-    setProducts(updatedProducts);
+  const fetchCategory = async () => {
+    try {
+      const response = await publicRequest("category");
+      if (response && response.data) {
+        const categoryNames = response.data.map((cat) => cat.name);
+        setCategory(["All", ...categoryNames]);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil kategori:", error);
+    }
   };
 
-  const handleLoadMore = () => {
-    setVisibleCount(prev => prev + 3);
-  };
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-    setVisibleCount(6);
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    setVisibleCount(4);
   };
 
   useEffect(() => {
@@ -60,104 +68,121 @@ const UserWebListBeforeLogin = () => {
     }
   }, [selectedCategory]);
 
-  return (
-    <section id="WebList" className="relative flex flex-col items-center justify-center w-full min-h-screen py-20 bg-gradient-to-b from-blue-100 to-blue-300 backdrop-blur-lg">
-      <h2 className="mt-4 mb-2 text-4xl font-bold font-poppins md:text-4xl ">Daftar Website</h2>
+  const handleClickWeblist = () => {
+    setShowLoginPopup(true); // ✅ Tampilkan popup login
+  };
 
-      <p className="max-w-2xl mb-8 text-sm text-center text-gray-500 opacity-70 font-poppins">
-        Temukan berbagai website menarik dari kategori pilihan. Scroll dan jelajahi karya terbaik kami.
+  const filteredWeblist =
+    selectedCategory === "All"
+      ? weblist
+      : weblist.filter((item) => item.category === selectedCategory);
+
+  const visibleWeblist = filteredWeblist.slice(0, visibleCount);
+
+  return (
+    <section
+      id="weblist"
+      className="flex flex-col items-center justify-center w-full min-h-screen py-24 bg-gradient-to-t from-[#c1cee5] to-[#6390cc] text-white"
+    >
+      <h2 className="mt-2 mb-2 text-4xl font-bold tracking-tight font-satoshi">
+        Jelajahi Website
+      </h2>
+      <p className="mb-5 text-sm leading-relaxed text-center text-white/40 font-poppins">
+        Temukan berbagai website menarik dari kategori pilihan. Scroll dan
+        jelajahi karya terbaik kami.
       </p>
 
-      {/* Kategori dengan Glide Background */}
-      <div className="relative flex flex-wrap justify-center mb-8 space-x-2">
-        {/* Glide Background */}
+      {/* Kategori Filter */}
+      <div className="relative flex flex-wrap justify-center gap-2 px-4 mb-10">
         <motion.div
           layout
-          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-          className="absolute h-full bg-white rounded-full backdrop-blur-md"
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="absolute bg-white rounded-full shadow-md h-9"
           style={{ width: indicatorStyle.width, left: indicatorStyle.left }}
-        ></motion.div>
-
-        {category.map((category) => (
+        />
+        {category.map((cat) => (
           <button
-            key={category}
-            ref={el => buttonsRef.current[category] = el}
-            onClick={() => handleCategoryChange(category)}
-            className={`relative z-10 px-4 py-2 m-1 rounded-full text-sm font-medium transition 
-              ${selectedCategory === category ? 'text-black' : 'text-black hover:bg-invaPink hover:text-white'}`}
+            key={cat}
+            ref={(el) => (buttonsRef.current[cat] = el)}
+            onClick={() => handleCategoryChange(cat)}
+            className={`relative z-10 px-5 py-2 rounded-full text-sm font-poppins transition-all duration-200
+              ${
+                selectedCategory === cat
+                  ? "text-black bg-white shadow-sm"
+                  : "text-white/80 hover:bg-white/10 hover:text-white"
+              }`}
           >
-            {category}
+            {cat}
           </button>
         ))}
       </div>
 
-      {/* Produk */}
-      <div className={`grid w-full grid-cols-1 gap-6 px-8 max-w-7xl md:grid-cols-3 ${!isLoggedIn && 'pointer-events-none blur-sm brightness-75'}`}>
+      {/* Weblist Cards */}
+      <div className="grid w-full grid-cols-1 gap-8 px-8 max-w-7xl sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <AnimatePresence>
-          {visibleProducts.map((product) => (
+          {visibleWeblist.map((item) => (
             <motion.div
-              key={product.id}
+              key={item.id}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.4 }}
-              className="flex flex-col overflow-hidden text-black transition-transform duration-300 transform shadow-lg bg-white/20 rounded-2xl hover:scale-105 hover:shadow-2xl"
+              onClick={handleClickWeblist}
+              className="flex flex-col overflow-hidden text-black transition-all duration-300 transform rounded-md cursor-pointer relative
+after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[2px] after:w-0 after:bg-black/50 after:transition-all after:duration-300 hover:after:w-full"
             >
-              {/* Gambar Website */}
-              <div className="w-full overflow-hidden aspect-video">
-                <img src={product.image} alt={product.uploader} className="object-cover w-full h-full" />
-              </div>
-
-              {/* Uploader Info + Like */}
-              <div className="flex items-center justify-between px-4 py-4 bg-invaGray bg-opacity-80 backdrop-blur-md">
-                <div className="flex items-center space-x-3">
-                  <img src={product.profile} alt={product.uploader} className="object-cover w-10 h-10 rounded-full" />
-                  <span className="text-sm font-medium text-black">{product.uploader}</span>
+              <div className="relative w-full overflow-hidden aspect-[4/3] group">
+                <img
+                  src={item.image}
+                  alt={item.uploader}
+                  className="object-cover w-full h-full transition-transform duration-500 ease-out rounded-md group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-end transition-opacity duration-300 rounded-sm opacity-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent group-hover:opacity-100">
+                  <p className="w-1/2 px-4 pb-3 text-[15px] font-semibold text-white truncate font-poppins">
+                    {item.title}
+                  </p>
                 </div>
-
-                {/* Tombol Like */}
-                <motion.button
-                  whileTap={{ scale: 1.2 }}
-                  onClick={() => handleLike(product.id)}
-                  className="flex items-center px-3 py-1 space-x-1 text-sm text-white transition rounded-lg bg-invaPurple hover:bg-invaPink"
-                >
-                  <Heart className="w-4 h-4" />
-                  <span>{product.likes}</span>
-                </motion.button>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center space-x-2 overflow-hidden">
+                  <img
+                    src={item.profile}
+                    alt={item.uploader}
+                    className="object-cover w-6 h-6 rounded-full"
+                  />
+                  <span className="text-[12px] font-medium text-black truncate font-poppins max-w-[100px]">
+                    {item.uploader?.length > 18
+                      ? item.uploader.slice(0, 15) + "..."
+                      : item.uploader}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <Heart className="w-4 h-4 text-black" />
+                  <span className="text-black">0</span>
+                  <Eye className="w-4 h-4 ml-2 text-black" />
+                  <span className="text-black">0</span>
+                </div>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
 
-      {/* Load More */}
-      {visibleCount < filteredProducts.length && (
+      {visibleCount < filteredWeblist.length && (
         <button
-          onClick={handleLoadMore}
-          className="px-6 py-2 mt-10 text-white transition rounded-lg bg-invaPurple hover:bg-invaPink"
+          onClick={() => setVisibleCount((prev) => prev + 4)}
+          className="px-6 py-2 mt-12 text-white transition-all rounded-full shadow-md bg-invaPurple hover:bg-invaPink hover:shadow-lg"
         >
           Load More
         </button>
       )}
 
-      {/* Overlay Jika Belum Login */}
-      {!isLoggedIn && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute inset-0 flex flex-col items-center justify-center text-center bg-gradient-to-t from-black/80 to-transparent backdrop-blur-sm"
-        >
-          <h3 className="mb-4 text-2xl font-bold text-white">Silakan Login Terlebih Dahulu</h3>
-          <button
-            onClick={() => navigate('/login')}
-            className="px-6 py-2 text-white transition rounded-lg bg-invaPurple hover:bg-invaPink"
-          >
-            Login Sekarang
-          </button>
-        </motion.div>
+      {/* ✅ Login Popup */}
+      {showLoginPopup && (
+        <Login show={showLoginPopup} onClose={() => setShowLoginPopup(false)} />
       )}
     </section>
   );
 };
 
-export default UserWebListBeforeLogin;
+export default UserWebList;

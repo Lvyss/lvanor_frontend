@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { AuthApi } from '../../LoginRegister/api/AuthApi';
 import { toast } from 'react-toastify';
 
-const AdminProfile = () => {
+const Index = () => {
   const { apiRequest } = useContext(AuthApi);
   const [form, setForm] = useState({
     name: '',
@@ -182,4 +182,4 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default Index;

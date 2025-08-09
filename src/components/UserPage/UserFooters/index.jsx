@@ -1,9 +1,9 @@
 import React from 'react';
 import { FaFacebookF, FaInstagram, FaTwitter, FaPinterestP } from 'react-icons/fa';
 
-const UserFooter = () => {
+const Index = () => {
   return (
-    <footer id="about" className=" flex flex-col items-center w-full px-8 py-8 border-t bg-[linear-gradient(to_top,_rgb(99,144,204),_rgba(193,206,229,1))]  backdrop-blur-lg ">
+    <footer id="about" className="flex flex-col items-center w-full px-8 py-8 border-t bg-gradient-blue backdrop-blur-lg">
 
       {/* Bagian Atas */}
       <div className="flex flex-col items-center justify-between w-full mb-4 md:flex-row max-w-7xl">
@@ -48,4 +48,4 @@ const UserFooter = () => {
   )
 }
 
-export default UserFooter;
+export default Index;

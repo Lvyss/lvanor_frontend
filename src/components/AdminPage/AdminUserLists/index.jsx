@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { AuthApi } from "../../LoginRegister/api/AuthApi";
 import { toast } from "react-toastify";
 
-const AdminUserList = () => {
+const Index = () => {
   const { loading, apiRequest } = useContext(AuthApi);
   const [users, setUsers] = useState([]);
 
@@ -85,4 +85,4 @@ const AdminUserList = () => {
   );
 };
 
-export default AdminUserList;
+export default Index;

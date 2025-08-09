@@ -6,7 +6,7 @@ import { EffectCoverflow, Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
-import UserFooter from "../../UserFooters/UserFooter";
+import UserFooter from "../../../UserFooters";
 
 const ModalContent = ({ data }) => {
   const scrollRef = useRef(null);
@@ -37,12 +37,14 @@ const ModalContent = ({ data }) => {
       onClick={(e) => e.stopPropagation()}
       className="relative w-full max-h-screen overflow-y-auto shadow-xl"
     >
-      <div className="pb-10 pt-14">
+      <div className="bg-[linear-gradient(to_top,_rgb(99,144,204),_rgba(193,206,229,1))] pb-10  pt-14">
+
         <h2 className="md:pr-[20%] md:pl-[20%] pr-[10%] pl-[10%] w-full text-2xl text-gray-900 break-words font-poppins">
           {data.title}
         </h2>
 
         {/* Sticky Header */}
+        
         <div
           className={`sticky top-0 z-50 pt-6 pb-4 transition-all duration-1000 ${
             scrolledHeader
@@ -118,17 +120,17 @@ const ModalContent = ({ data }) => {
           <p
             className={`inline-block px-9 py-3 rounded-full font-medium text-sm ${
               Number(detail?.price) > 0
-                ? "bg-yellow-800 text-white"
+                ? "bg-orange-500 text-white"
                 : "bg-green-500 text-white"
             }`}
           >
             {Number(detail?.price) > 0
-              ? `Rp ${Number(detail.price).toLocaleString("id-ID")}`
-              : "Gratis"}
+              ? `Dapatkan : Rp ${Number(detail.price).toLocaleString("id-ID")}`
+              : "Dapatkan : Gratis"}
           </p>
         </div>
-
-        {/* Swiper */}
+<div className="bg-[linear-gradient(to_top,_#C0CDE5,_#91AED8)]"
+>        {/* Swiper */}
         {images.length > 0 && (
           <div className="mt-12 mb-16 md:mr-[20%] md:ml-[20%] mr-[10%] ml-[10%]">
             <p className="mb-4 text-gray-800 text-md font-poppins">
@@ -169,7 +171,7 @@ const ModalContent = ({ data }) => {
         )}
 
         {/* Footer Info */}
-        <div className="mt-60 mb-60 pr-[10%] pl-[10%] text-center">
+        <div className=" mt-60 mb-60 pr-[10%] pl-[10%] text-center ">
           <div className="flex items-center justify-center gap-6">
             <div className="flex-1 h-[2px] bg-white/50" />
             <img
@@ -195,10 +197,11 @@ const ModalContent = ({ data }) => {
               </span>
             </a>
           )}
+        </div><UserFooter /></div>
+        
         </div>
-        <UserFooter />
       </div>
-    </div>
+
   );
 };
 

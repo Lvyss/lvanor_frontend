@@ -1,6 +1,6 @@
 // index.jsx
-import ModalWrapper from "./ModalWrapper";
-import ModalContent from "./ModalContent.jsx";
+import ModalWrapper from "./components/ModalWrapper.jsx";
+import ModalContent from "./components/ModalContent.jsx";
 
 const Index = ({ isOpen, onClose, data }) => {
   if (!isOpen || !data) return null;

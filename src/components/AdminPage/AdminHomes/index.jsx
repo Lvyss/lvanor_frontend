@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
-const AdminHome = () => {
+const Index = () => {
   return (
 <section 
   id="Beranda" 
@@ -72,4 +72,4 @@ const AdminHome = () => {
   )
 }
 
-export default AdminHome;
+export default Index;

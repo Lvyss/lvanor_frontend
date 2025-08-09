@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import UserHome from "./UserHomes/UserHome";
+import UserHome from "./UserHomes";
 import UserWebList from "./UserWebList/UserWebList";
 
 const UserHomeWeblist = () => {

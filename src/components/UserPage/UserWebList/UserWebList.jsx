@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Heart } from "lucide-react";
 import { AuthApi } from "../../LoginRegister/api/AuthApi";
 import UserWeblistDetail from "./UserWeblistDetails";
+import { useNavigate } from "react-router-dom"; // 👉 Tambahkan untuk navigasi
 
 const UserWebList = () => {
   const { apiRequest } = useContext(AuthApi);
@@ -14,6 +15,8 @@ const UserWebList = () => {
   const buttonsRef = useRef({});
   const [selectedWeblist, setSelectedWeblist] = useState(null);
   const [detailData, setDetailData] = useState(null);
+
+  const navigate = useNavigate(); // 👉 Gunakan useNavigate
 
   useEffect(() => {
     fetchWeblist();
@@ -28,9 +31,10 @@ const UserWebList = () => {
           id: item.id,
           title: item.title,
           category: item.category?.name || "Unknown",
-          uploader: item.user?.name || "Anonymous",
-          profile: item.user?.profile_picture || "/images/default-profile.png",
+          uploader: item.user?.detail?.username || "Anonymous",
+          profile: item.user?.detail?.profile_picture || "/images/default-profile.png",
           image: item.image_path,
+          user_id: item.user?.id, // ✅ Include user_id
         }));
         setWeblist(weblist);
       }
@@ -51,11 +55,11 @@ const UserWebList = () => {
     }
   };
 
-  const handleLoadMore = () => setVisibleCount((prev) => prev + 3);
+  const handleLoadMore = () => setVisibleCount((prev) => prev + 4);
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setVisibleCount(3);
+    setVisibleCount(4);
   };
 
   useEffect(() => {
@@ -88,7 +92,7 @@ const UserWebList = () => {
   return (
     <section
       id="weblist"
-      className="flex flex-col items-center justify-center w-full min-h-screen py-24 bg-gradient-to-t from-[#c1cee5] to-[#6390cc] text-white"
+      className="flex flex-col items-center justify-center w-full min-h-screen py-24 text-white bg-gradient-white"
     >
       <h2 className="mt-2 mb-2 text-4xl font-bold tracking-tight font-satoshi">
         Jelajahi Website
@@ -103,7 +107,7 @@ const UserWebList = () => {
         <motion.div
           layout
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className="absolute bg-white rounded-full shadow-md h-9"
+          className="absolute rounded-full shadow-md h-9"
           style={{ width: indicatorStyle.width, left: indicatorStyle.left }}
         />
         {category.map((cat) => (
@@ -114,8 +118,8 @@ const UserWebList = () => {
             className={`relative z-10 px-5 py-2 rounded-full text-sm font-poppins transition-all duration-200
               ${
                 selectedCategory === cat
-                  ? "text-black bg-white shadow-sm"
-                  : "text-white/80 hover:bg-white/10 hover:text-white"
+                  ? "text-white  border border-white/30 shadow-xl"
+                  : "text-white  hover:bg-white/10 hover:text-white"
               }`}
           >
             {cat}
@@ -135,7 +139,7 @@ const UserWebList = () => {
               transition={{ duration: 0.4 }}
               onClick={() => handleOpenDetail(weblist.id)}
               className="flex flex-col overflow-hidden text-black transition-all duration-300 transform rounded-md cursor-pointer relative
-after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[2px] after:w-0 after:bg-black/50 after:transition-all after:duration-300 hover:after:w-full"
+              after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[2px] after:w-0 after:bg-black/50 after:transition-all after:duration-300 hover:after:w-full"
             >
               <div className="relative w-full overflow-hidden aspect-[4/3] group">
                 <img
@@ -150,12 +154,17 @@ after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate
                 </div>
               </div>
 
-              <div className="flex items-center justify-between py-2 ">
+              <div className="flex items-center justify-between py-2">
                 <div className="flex items-center space-x-2 overflow-hidden">
+                  {/* 👇 Tambahkan navigasi ke halaman profil publik */}
                   <img
                     src={weblist.profile}
                     alt={weblist.uploader}
-                    className="object-cover w-6 h-6 rounded-full"
+                    onClick={(e) => {
+                      e.stopPropagation(); // ✅ Agar tidak memicu detail modal
+                      navigate(`/user/user-profile/${weblist.user_id}`);
+                    }}
+                    className="object-cover w-6 h-6 rounded-full cursor-pointer hover:ring-2 hover:ring-invaPurple"
                   />
                   <div className="flex items-center gap-1">
                     <span className="text-[12px] font-medium text-black truncate font-poppins max-w-[100px]">
@@ -189,7 +198,6 @@ after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate
       )}
 
       {/* Weblist Detail Modal */}
-
       <UserWeblistDetail
         isOpen={!!selectedWeblist}
         onClose={() => {

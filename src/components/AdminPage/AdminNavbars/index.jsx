@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthApi } from '../../LoginRegister/api/AuthApi';
 import routes from '../../../routes';
-const AdminNavbar = () => {
+const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { logout } = useContext(AuthApi);
   const navigate = useNavigate();
@@ -83,4 +83,4 @@ const AdminNavbar = () => {
   );
 };
 
-export default AdminNavbar;
+export default Index;

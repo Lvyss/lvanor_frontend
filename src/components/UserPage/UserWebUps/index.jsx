@@ -3,7 +3,7 @@ import { AuthApi } from '../../LoginRegister/api/AuthApi';
 import { useNavigate } from 'react-router-dom';
 import routes
  from '../../../routes';
-const UserWebUp = () => {
+const Index = () => {
   const { apiRequest } = useContext(AuthApi);
   const [weblist, setWeblist] = useState([]);
   const [category, setCategory] = useState([]);
@@ -155,4 +155,4 @@ await apiRequest(`my-weblist/${editId}`, 'PUT', formData, true);
   );
 };
 
-export default UserWebUp;
+export default Index;

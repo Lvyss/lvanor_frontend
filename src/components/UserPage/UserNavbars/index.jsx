@@ -6,43 +6,40 @@ import LoginLogoutButton from "./Components/LoginLogoutButton";
 import ToggleButton from "./Components/ToogleButton";
 import MobileMenu from "./Components/MobileMenu";
 import FloatingLogo from "./Components/FloatingLogo";
+import Login from "../../LoginRegister/pages/Login"; // ✅ Tambahan
 
 import { Link } from "react-router-dom";
 import { AuthApi } from "../../LoginRegister/api/AuthApi";
 import routes from "../../../routes";
 
-const UserNavbar = () => {
+const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLogoClicked, setIsLogoClicked] = useState(false);
   const [activePage, setActivePage] = useState("Beranda");
   const [timeoutId, setTimeoutId] = useState(null);
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // ✅ Tambahan
 
-  // 🔥 Ambil auth gabungan dan logout universal
   const { auth, logout } = useContext(AuthApi);
 
-  // Popup Logout
-  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const handleScroll = () => {
+    if (isMenuOpen) return;
 
-  // Scroll Navbar
-const handleScroll = () => {
-  if (isMenuOpen) return;
+    if (window.scrollY > lastScrollY) {
+      clearTimeout(timeoutId);
+      const newTimeoutId = setTimeout(() => {
+        setShowNavbar(false);
+      }, 50);
+      setTimeoutId(newTimeoutId);
+    } else {
+      setShowNavbar(true);
+      clearTimeout(timeoutId);
+    }
 
-  if (window.scrollY > lastScrollY) {
-    clearTimeout(timeoutId);
-    const newTimeoutId = setTimeout(() => {
-      setShowNavbar(false);
-    }, 50); // 🔧 dipercepat
-    setTimeoutId(newTimeoutId);
-  } else {
-    setShowNavbar(true);
-    clearTimeout(timeoutId);
-  }
-
-  setLastScrollY(window.scrollY);
-};
-
+    setLastScrollY(window.scrollY);
+  };
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -56,6 +53,7 @@ const handleScroll = () => {
 
   const handleLoginClick = () => {
     setIsMenuOpen(false);
+    setShowLoginPopup(true); // ✅ Munculkan popup login
   };
 
   const handleFloatingLogoClick = () => {
@@ -66,14 +64,12 @@ const handleScroll = () => {
     }, 500);
   };
 
-  // Logout Universal
   const handleLogout = async () => {
-    await logout(); // 🔥 Pakai logout universal
+    await logout();
     sessionStorage.setItem("showLogoutPopup", "true");
     window.location.href = "/";
   };
 
-  // Tampilkan popup kalau ada flag
   useEffect(() => {
     const shouldShowPopup = sessionStorage.getItem("showLogoutPopup");
     if (shouldShowPopup === "true") {
@@ -81,7 +77,6 @@ const handleScroll = () => {
     }
   }, []);
 
-  // Tutup popup
   const handleLogoutNavigate = () => {
     setShowLogoutPopup(false);
     sessionStorage.removeItem("showLogoutPopup");
@@ -98,12 +93,11 @@ const handleScroll = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -80, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed top-0 z-50 w-full py-[4%] md:py-[1.5%] shadow-lg px-[5%] backdrop-blur-[5px] border-b border-white/20 "
+            className="fixed top-0 z-50 w-full py-[4%] md:py-[1.5%] shadow-lg px-[5%] backdrop-blur-[5px] border-b border-white/20"
           >
-            {/* === 🖥️ Desktop Layout === */}
-            <div className="hidden md:flex items-center justify-between w-full">
-              {/* Kiri */}
-              <div className="flex items-center space-x-3 font-antiqua cursor-pointer">
+            {/* 🖥️ Desktop Layout */}
+            <div className="items-center justify-between hidden w-full md:flex">
+              <div className="flex items-center space-x-3 cursor-pointer font-antiqua">
                 <img
                   src="/images/logo.png"
                   alt="Logo"
@@ -112,7 +106,6 @@ const handleScroll = () => {
                 <TitleText text="LVANOR" />
               </div>
 
-              {/* Tengah */}
               <div className="flex items-center space-x-8">
                 <MenuText
                   activePage={activePage}
@@ -120,15 +113,12 @@ const handleScroll = () => {
                 />
               </div>
 
-              {/* Kanan */}
               <div className="flex items-center space-x-4">
                 {!auth.token ? (
-                  <Link to={routes.login}>
-                    <LoginLogoutButton
-                      type="login"
-                      onClick={handleLoginClick}
-                    />
-                  </Link>
+                  <LoginLogoutButton
+                    type="login"
+                    onClick={handleLoginClick} // ✅ popup
+                  />
                 ) : (
                   <LoginLogoutButton type="logout" onClick={handleLogout} />
                 )}
@@ -139,9 +129,8 @@ const handleScroll = () => {
               </div>
             </div>
 
-            {/* === 📱 Mobile Layout === */}
+            {/* 📱 Mobile Layout */}
             <div className="flex items-center justify-between w-full md:hidden">
-              {/* Kiri: Menu & Logo */}
               <div className="flex items-center space-x-3">
                 <ToggleButton
                   isOpen={isMenuOpen}
@@ -157,15 +146,12 @@ const handleScroll = () => {
                 </div>
               </div>
 
-              {/* Kanan: Login/Logout */}
               <div>
                 {!auth.token ? (
-                  <Link to={routes.login}>
-                    <LoginLogoutButton
-                      type="login"
-                      onClick={handleLoginClick}
-                    />
-                  </Link>
+                  <LoginLogoutButton
+                    type="login"
+                    onClick={handleLoginClick} // ✅ popup
+                  />
                 ) : (
                   <LoginLogoutButton type="logout" onClick={handleLogout} />
                 )}
@@ -181,13 +167,18 @@ const handleScroll = () => {
         activePage={activePage}
       />
 
-      {/* Floating Logo */}
       <FloatingLogo
         show={!showNavbar && !isLogoClicked}
         onClick={handleFloatingLogoClick}
       />
 
-      {/* Popup Logout */}
+      {/* ✅ Login Popup */}
+      <Login
+        show={showLoginPopup}
+        onClose={() => setShowLoginPopup(false)}
+      />
+
+      {/* Logout Popup */}
       {showLogoutPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="max-w-sm p-6 text-center bg-white rounded-lg shadow-lg">
@@ -208,4 +199,4 @@ const handleScroll = () => {
   );
 };
 
-export default UserNavbar;
+export default Index;

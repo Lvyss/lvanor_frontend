@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthApi } from "../../LoginRegister/api/AuthApi";
 
-const AdminCategoryList = () => {
+const Index = () => {
   const { apiRequest } = useContext(AuthApi);
   const [category, setCategory] = useState([]);
   const [name, setName] = useState('');
@@ -162,4 +162,4 @@ const fetchCategory = async () => {
   );
 };
 
-export default AdminCategoryList;
+export default Index;

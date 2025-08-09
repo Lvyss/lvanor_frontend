@@ -8,26 +8,24 @@ import { useContext } from "react";
 import routes from "./routes";
 import NotFound from "./components/NotFound";
 
-import Login from "./components/LoginRegister/pages/Login";
-import Register from "./components/LoginRegister/pages/Register";
-
 import PrivateRoute from "./components/LoginRegister/pages/components/PrivateRoute";
 import GuestRoute from "./components/LoginRegister/pages/components/GuestRoute";
 
-import AdminLayout from "./components/AdminPage/AdminLayout";
-import AdminHome from "./components/AdminPage/AdminHomes/AdminHome";
-import AdminCategoryList from "./components/AdminPage/AdminCategoryLists/AdminCategoryList";
-import AdminUserList from "./components/AdminPage/AdminUserLists/AdminUserList";
-import AdminWebList from "./components/AdminPage/AdminWebLists/AdminWebList";
+import AdminLayout from "./components/AdminPage";
+import AdminHome from "./components/AdminPage/AdminHomes";
+import AdminCategoryList from "./components/AdminPage/AdminCategoryLists";
+import AdminUserList from "./components/AdminPage/AdminUserLists";
+import AdminWebList from "./components/AdminPage/AdminWebLists";
 import AdminWebDetail from "./components/AdminPage/AdminWebLists/AdminWeblistDetail";
-import AdminProfile from "./components/AdminPage/AdminProfiles/AdminProfile";
+import AdminProfile from "./components/AdminPage/AdminProfiles";
 
 import StartPage from "./components/UserPage/StartPage";
-import UserLayout from "./components/UserPage/UserLayout";
+import UserLayout from "./components/UserPage";
 import UserHomeWeblist from "./components/UserPage/UserHomeWeblist";
-import UserProfile from "./components/UserPage/UserProfiles/UserProfile";
-import UserWebUp from "./components/UserPage/UserWebUp/UserWebUp";
-import UserWebUpDetail from "./components/UserPage/UserWebUp/UserWebUpDetail";
+import UserProfile from "./components/UserPage/UserProfiles";
+import UserPublicProfile from "./components/UserPage/UserProfiles/PublicProfile";
+import UserWebUp from "./components/UserPage/UserWebUps";
+import UserWebUpDetail from "./components/UserPage/UserWebUps/UserWebUpDetail";
 
 function AppContent() {
   const { isInitializing, loading } = useContext(AuthApi);
@@ -35,6 +33,7 @@ function AppContent() {
   // ⏳ Saat aplikasi pertama kali dijalankan, tunggu cek localStorage
   if (isInitializing) {
     return (
+      
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
         <ClipLoader size={80} color="#6B46C1" />
       </div>
@@ -42,6 +41,7 @@ function AppContent() {
   }
 
   return (
+    
     <>
       {/* ⏳ Loader global ketika ada request berjalan */}
       {loading && (
@@ -60,26 +60,6 @@ function AppContent() {
     </GuestRoute>
   }
 />
-
-
-        {/* 🔒 Halaman Login & Register (hanya untuk yang belum login) */}
-        <Route
-          path={routes.login}
-          element={
-            <GuestRoute>
-              <Login />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path={routes.register}
-          element={
-            <GuestRoute>
-              <Register />
-            </GuestRoute>
-          }
-        />
-
         {/* 🔐 Halaman Admin */}
         <Route
           path={routes.admin}
@@ -110,6 +90,7 @@ function AppContent() {
           }
         >
           <Route index element={<UserHomeWeblist />} />
+          <Route path="/user/user-profile/:id" element={<UserPublicProfile />} />
           <Route path={routes.userProfile} element={<UserProfile />} />
           <Route path={routes.userWeblist} element={<UserWebUp />} />
           <Route

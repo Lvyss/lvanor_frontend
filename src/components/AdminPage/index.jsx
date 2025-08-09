@@ -1,10 +1,10 @@
-// src/pages/AdminLayout.jsx
+// src/pages/Index.jsx
 import React, { useEffect } from "react"; // ✅ FIX: Tambahkan useEffect
 import { Outlet, useLocation } from "react-router-dom";
-import AdminNavbar from "./AdminNavbars/AdminNavbar";
-import AdminFooter from "./AdminFooters/AdminFooter";
+import AdminNavbar from "./AdminNavbars";
+import AdminFooter from "./AdminFooters";
 
-const AdminLayout = () => {
+const Index = () => {
   const location = useLocation();
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex min-h-screen">
-      <div className="flex-1 flex flex-col">
+      <div className="flex flex-col flex-1">
         <AdminNavbar />
         <main className="flex-1 p-4 bg-gray-50">
           <Outlet />
@@ -24,4 +24,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
+export default Index;

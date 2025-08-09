@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-const UserHome = () => {
+const Index = () => {
   const [isSplineLoading, setIsSplineLoading] = useState(true);
 
   const [showFooter, setShowFooter] = useState(true);
@@ -47,7 +47,7 @@ useEffect(() => {
   return (
     <section
       id="home"
-      className="relative w-full h-[calc(var(--vh,1vh)*100)] overflow-hidden bg-[linear-gradient(to_top,_rgb(99,144,204),_rgba(193,206,229,1))]"
+      className="relative w-full h-[calc(var(--vh,1vh)*100)] overflow-hidden bg-gradient-blue"
     >
       <div className="relative z-20 flex flex-col items-center justify-between w-full h-full py-16 md:flex-row md:py-0">
         {/* Kiri */}
@@ -170,4 +170,4 @@ useEffect(() => {
   );
 };
 
-export default UserHome;
+export default Index;

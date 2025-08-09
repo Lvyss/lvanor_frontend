@@ -86,7 +86,7 @@ const useWebList = () => {
 };
 
 // Komponen Utama Admin
-const AdminWebList = () => {
+const Index = () => {
   const {
     images,
     popupMessage,
@@ -113,4 +113,4 @@ const AdminWebList = () => {
   );
 };
 
-export default AdminWebList;
+export default Index;

@@ -1,13 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthApi } from "../../api/AuthApi";
-import routes from "../../../../routes";
 import { ClipLoader } from "react-spinners";
-import { toast } from "react-toastify"; // ✅ Tambahkan ini
+import { toast } from "react-toastify";
 
 const PrivateRoute = ({ children, role }) => {
-  const { auth, isInitializing } = useContext(AuthApi);
-const { logout } = useContext(AuthApi);
+  const { auth, isInitializing, logout } = useContext(AuthApi);
+  const hasShownToast = useRef(false); // 🔐 Cegah duplikat toast
+
   if (isInitializing) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
@@ -17,14 +17,17 @@ const { logout } = useContext(AuthApi);
   }
 
   if (!auth.token || !auth.user) {
-    const redirectPath = role === "admin" ? "/admin/login" : routes.login;
-    return <Navigate to={redirectPath} replace />;
+    return <Navigate to="/" replace />;
   }
-if (auth.user.role !== role) {
-  toast.error("Akses ditolak: Role tidak sesuai");
-  logout();
-  return null;
-}
+
+  if (role && auth.user.role !== role) {
+    if (!hasShownToast.current) {
+      toast.error("Akses ditolak: Role tidak sesuai");
+      hasShownToast.current = true;
+    }
+    logout(); // 🔐 Logout biar bersih
+    return null;
+  }
 
   return children;
 };

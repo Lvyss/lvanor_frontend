@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaFacebookF, FaInstagram, FaTwitter, FaPinterestP } from 'react-icons/fa';
 
-const AdminFooter = () => {
+const Index = () => {
   return (
     <footer className="flex flex-col items-center w-full px-8 py-8 border-t bg-gradient-to-b from-blue-300 to-blue-100 backdrop-blur-lg ">
 
@@ -48,4 +48,4 @@ const AdminFooter = () => {
   )
 }
 
-export default AdminFooter;
+export default Index;
