@@ -7,14 +7,14 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import UserFooter from "../../../UserFooters";
-
+import { useNavigate } from "react-router-dom"; // 👉 Tambahkan untuk navigasi
 const ModalContent = ({ data }) => {
   const scrollRef = useRef(null);
   const [scrolledHeader, setScrolledHeader] = useState(false);
 
   const detail = data.weblist_detail;
   const images = data.weblist_images || [];
-
+  const navigate = useNavigate(); // 👉 Gunakan useNavigate
   useEffect(() => {
     const handleScroll = () => {
       if (scrollRef.current) {
@@ -55,12 +55,16 @@ const ModalContent = ({ data }) => {
           <div className="flex flex-col md:mr-[20%] md:ml-[20%] mr-[10%] ml-[10%] justify-between gap-4 md:flex-row md:items-center">
             <div className="flex items-center gap-4">
               <img
-                src={data.user?.profile_picture || "/images/default-profile.png"}
-                alt={data.user?.name || "Uploader"}
+                src={data.user?.detail?.profile_picture || "/images/default-profile.png"}
+                alt={data.user?.detail?.profile_picture || "Uploader"}
+                                                  onClick={(e) => {
+                      e.stopPropagation(); // ✅ Agar tidak memicu detail modal
+                      navigate(`/user/user-profile/${data.user?.id}`);
+                    }}
                 className="object-cover w-10 h-10 rounded-full"
               />
               <div className="text-sm">
-                <p className="font-semibold text-black">{data.user?.name}</p>
+                <p className="font-semibold text-black">{data.user?.detail?.username}</p>
                 <p className="flex items-center gap-1 text-black">
                   <Mail size={14} className="inline-block" />
                   {data.user?.email || "design@example.com"}
@@ -175,14 +179,18 @@ const ModalContent = ({ data }) => {
           <div className="flex items-center justify-center gap-6">
             <div className="flex-1 h-[2px] bg-white/50" />
             <img
-              src={data.user?.profile_picture || "/images/default-profile.png"}
-              alt={data.user?.name || "Uploader"}
+              src={data.user?.detail?.profile_picture || "/images/default-profile.png"}
+              alt={data.user?.detail?.profile_picture || "Uploader"}
+                                  onClick={(e) => {
+                      e.stopPropagation(); // ✅ Agar tidak memicu detail modal
+                      navigate(`/user/user-profile/${data.user?.id}`);
+                    }}
               className="object-cover rounded-full shadow-md w-14 h-14"
             />
             <div className="flex-1 h-[2px] bg-white/50" />
           </div>
           <h2 className="mt-4 text-gray-900 text-md font-poppins">
-            {data.user?.name || "Nama Pengguna"}
+            {data.user?.detail?.username || "Nama Pengguna"}
           </h2>
           {detail?.website_link && (
             <a

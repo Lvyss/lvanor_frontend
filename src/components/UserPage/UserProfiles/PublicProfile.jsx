@@ -7,23 +7,31 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import UserWeblistDetail from "../UserWebList/UserWeblistDetails";
 const PublicProfile = () => {
   const { apiRequest } = useContext(AuthApi);
   const [profile, setProfile] = useState(null);
   const [weblist, setWeblist] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [selectedWeblist, setSelectedWeblist] = useState(null);
   const [categories, setCategories] = useState(["All"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
 const [isSplineLoading, setIsSplineLoading] = useState(true);
-
+  const [detailData, setDetailData] = useState(null);
 useEffect(() => {
   // Simulasi loading Spline, bisa diganti dengan event onLoad iframe
   const timer = setTimeout(() => setIsSplineLoading(false), 1500);
   return () => clearTimeout(timer);
 }, []);
-
+  const handleOpenDetail = async (id) => {
+    try {
+      const res = await apiRequest(`explore-weblist/${id}`, "GET");
+      setDetailData(res.data);
+      setSelectedWeblist(id);
+    } catch (err) {
+      console.error("Gagal fetch detail:", err);
+    }
+  };
   const fetchProfile = async () => {
     try {
       const response = await apiRequest('profile', 'GET');
@@ -210,6 +218,7 @@ useEffect(() => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.4 }}
+            onClick={() => handleOpenDetail(item.id)}
             className="flex flex-col overflow-hidden text-black transition-all duration-300 transform rounded-md cursor-pointer relative
               after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[2px] after:w-0 after:bg-black/50 after:transition-all after:duration-300 hover:after:w-full"
           >
@@ -232,8 +241,17 @@ useEffect(() => {
       </AnimatePresence>
     </div>
   )}
-</div>
+</div>      {/* Weblist Detail Modal */}
+      <UserWeblistDetail
+        isOpen={!!selectedWeblist}
+        onClose={() => {
+          setSelectedWeblist(null);
+          setDetailData(null);
+        }}
+        data={detailData}
+      />
     </section>
+    
   );
 };
 
