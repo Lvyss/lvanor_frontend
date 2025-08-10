@@ -12,8 +12,34 @@ import {
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 
+const socialLinks = [
+  { field: "tiktok", Icon: FaTiktok, label: "TikTok" },
+  { field: "github", Icon: FaGithub, label: "GitHub" },
+  { field: "linkedin", Icon: FaLinkedin, label: "LinkedIn" },
+  { field: "instagram", Icon: FaInstagram, label: "Instagram" },
+  { field: "website", Icon: FaGlobe, label: "Website" },
+  { field: "email", Icon: FaEnvelope, label: "Email" },
+];
+
 const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
   const [isSplineLoading, setIsSplineLoading] = useState(false);
+
+  const handleProfilePictureChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const dataToSend = new FormData();
+    dataToSend.append("profile_picture", file);
+
+    try {
+      toast.info("📤 Mengunggah foto...");
+      await apiRequest("/profile/update", "PUT", dataToSend, true);
+      toast.success("✅ Foto berhasil diperbarui!");
+      fetchProfile();
+    } catch {
+      toast.error("❌ Gagal mengunggah foto");
+    }
+  };
 
   return (
     <div className="relative z-20 w-full pt-16 pb-10 mx-auto bg-gradient-blue md:pt-24">
@@ -32,39 +58,16 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
               <div className="w-24 h-24 rounded-full bg-white/30" />
             )}
 
-            <div className="flex flex-col ">
-              <label htmlFor="profilePicUpload">
-                <FaPen className="cursor-pointer text-white/50 hover:text-white" />
-              </label>
-
+            <label htmlFor="profilePicUpload" className="flex items-center">
+              <FaPen className="cursor-pointer text-white/50 hover:text-white" />
               <input
                 type="file"
                 id="profilePicUpload"
                 className="hidden"
                 accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
-
-                  const dataToSend = new FormData();
-                  dataToSend.append("profile_picture", file);
-
-                  try {
-                    toast.info("📤 Mengunggah foto...");
-                    await apiRequest(
-                      "/profile/update",
-                      "PUT",
-                      dataToSend,
-                      true
-                    );
-                    toast.success("✅ Foto berhasil diperbarui!");
-                    fetchProfile();
-                  } catch (err) {
-                    toast.error("❌ Gagal mengunggah foto");
-                  }
-                }}
+                onChange={handleProfilePictureChange}
               />
-            </div>
+            </label>
           </div>
 
           {/* Nama & Username */}
@@ -122,30 +125,22 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
 
           {/* Link Sosial */}
           <div className="flex flex-wrap items-center gap-3 mt-6">
-            {[
-              { field: "tiktok", label: <FaTiktok />, text: "TikTok" },
-              { field: "github", label: <FaGithub />, text: "GitHub" },
-              { field: "linkedin", label: <FaLinkedin />, text: "LinkedIn" },
-              { field: "instagram", label: <FaInstagram />, text: "Instagram" },
-              { field: "website", label: <FaGlobe />, text: "Website" },
-              { field: "email", label: <FaEnvelope />, text: "Email" },
-            ].map(
-              (link) =>
-                profile[link.field] && (
-                  <a
-                    key={link.field}
-                    href={
-                      link.field === "email"
-                        ? `mailto:${profile.email}`
-                        : profile[link.field]
-                    }
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition border rounded-full font-satoshi border-white/30 hover:bg-white/10"
-                  >
-                    {link.label} {link.text}
-                  </a>
-                )
+            {socialLinks.map(({ field, Icon, label }) =>
+              profile[field] ? (
+                <a
+                  key={field}
+                  href={
+                    field === "email"
+                      ? `mailto:${profile.email}`
+                      : profile[field]
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition border rounded-full font-satoshi border-white/30 hover:bg-white/10"
+                >
+                  <Icon /> {label}
+                </a>
+              ) : null
             )}
 
             <button
@@ -159,7 +154,7 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
                   email: profile.email,
                 })
               }
-             
+              aria-label="Edit Social Links"
             >
               <FaPen className="cursor-pointer text-white/50 hover:text-white" />
             </button>
@@ -174,12 +169,13 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
                 <motion.iframe
                   initial={{ opacity: 0 }}
                   animate={{ opacity: isSplineLoading ? 0 : 1 }}
-                  transition={{ duration: 1.0, ease: "easeInOut", delay: 0.5 }}
+                  transition={{ duration: 1, ease: "easeInOut", delay: 0.5 }}
                   src={profile.spline}
                   frameBorder="0"
                   className="absolute top-0 left-0 w-full h-full md:rounded-2xl"
                   allow="autoplay; fullscreen"
                   onLoad={() => setIsSplineLoading(false)}
+                  onLoadStart={() => setIsSplineLoading(true)}
                 />
                 {isSplineLoading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30">
@@ -191,9 +187,7 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
 
             {/* Edit spline */}
             <button
-              onClick={() =>
-                onEditField("spline", "Spline Link", profile.spline)
-              }
+              onClick={() => onEditField("spline", "Spline Link", profile.spline)}
               className="absolute px-3 py-3 text-xs text-white rounded bg-blue-950 bottom-2 right-2 hover:to-blue-700"
             >
               <FaPen className="cursor-pointer text-white/50 hover:text-white" />

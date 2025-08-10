@@ -12,7 +12,6 @@ const MenuText = ({ activePage, setActivePage }) => {
     { name: "Kategori", link: "#category", page: routes.user },
     { name: "Tentang Kami", link: "#about" },
     { name: "Profil", link: routes.userProfile },
-    { name: "WebUp", link: routes.userWeblist },
   ];
 
   const container = {

@@ -63,7 +63,7 @@ const WeblistModalForm = ({ close, fetchWeblist, category, web }) => {
           >
             <option value="">Pilih Kategori</option>
             {category.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
+              <option className='text-black' key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
           <input

@@ -23,7 +23,7 @@ import StartPage from "./components/UserPage/StartPage";
 import UserLayout from "./components/UserPage";
 import UserHomeWeblist from "./components/UserPage/UserHomeWeblist";
 import UserProfile from "./components/UserPage/UserProfiles/Profiles";
-import UserPublicProfile from "./components/UserPage/UserProfiles/PublicProfile";
+import UserPublicProfile from "./components/UserPage/UserProfiles/PublicProfiles";
 import UserWebUp from "./components/UserPage/UserWebUps";
 
 

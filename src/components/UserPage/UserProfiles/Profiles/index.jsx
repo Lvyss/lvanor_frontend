@@ -7,14 +7,16 @@ import EditFieldModal from "./EditFieldModal";
 
 const Index = () => {
   const { apiRequest } = useContext(AuthApi);
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
-  const [showModal, setShowModal] = useState(false);
-  const [activeField, setActiveField] = useState("");
-  const [activeLabel, setActiveLabel] = useState("");
-  const [activeValue, setActiveValue] = useState("");
+  // Modal state for editing profile fields
+  const [modalData, setModalData] = useState({
+    isOpen: false,
+    field: "",
+    label: "",
+    value: "",
+  });
 
   // Weblist states
   const [categories, setCategories] = useState(["All"]);
@@ -23,12 +25,13 @@ const Index = () => {
   const [selectedWeblist, setSelectedWeblist] = useState(null);
   const [detailData, setDetailData] = useState(null);
 
+  // Fetch profile
   const fetchProfile = async () => {
     try {
       const res = await apiRequest("profile", "GET");
       const detail = res.data?.detail || {};
 
-      const filled = {
+      const filledProfile = {
         id: detail.id || null,
         full_name: detail.full_name || "",
         username: detail.username || "",
@@ -44,61 +47,84 @@ const Index = () => {
         spline: detail.spline || "",
       };
 
-      setProfile(filled);
-
-      if (filled.id) {
-        const listResponse = await apiRequest(`public-weblist/${filled.id}`, "GET");
-        const data = listResponse.data || [];
-        setWeblist(data);
-
-        const uniqueCategories = ["All", ...new Set(data.map(item => item.category?.name).filter(Boolean))];
-        setCategories(uniqueCategories);
-      }
+      setProfile(filledProfile);
     } catch (error) {
       console.error("❌ Gagal mengambil data profil publik:", error);
-    } finally {
-      setLoading(false);
+      toast.error("Gagal mengambil data profil.");
     }
   };
 
-  const handleOpenModal = (field, label, value) => {
-    setActiveField(field);
-    setActiveLabel(label);
-    setActiveValue(value || "");
-    setShowModal(true);
+  // Fetch Weblist
+  const fetchWeblist = async () => {
+    try {
+      const res = await apiRequest("my-weblist", "GET");
+      setWeblist(res.data);
+    } catch {
+      toast.error("Gagal ambil data Weblist.");
+    }
   };
 
-  const handleUpdateField = async (field, value) => {
+  // Fetch Categories
+  const fetchCategories = async () => {
+    try {
+      const res = await apiRequest("category", "GET");
+      // Tambahkan "All" di depan data kategori
+      setCategories(["All", ...res.data]);
+    } catch {
+      toast.error("Gagal ambil kategori.");
+    }
+  };
+
+  // Gabungkan semua fetch di awal
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([fetchProfile(), fetchCategories(), fetchWeblist()])
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Open modal with specific field info
+  const openEditModal = (field, label, value = "") => {
+    setModalData({
+      isOpen: true,
+      field,
+      label,
+      value,
+    });
+  };
+
+  // Handle saving updated field
+  const handleSaveField = async (field, value) => {
     try {
       const dataToSend = new FormData();
-
       if (field === "social_links") {
-        Object.keys(value).forEach((key) => {
-          dataToSend.append(key, value[key] || "");
-        });
+        Object.entries(value).forEach(([key, val]) => dataToSend.append(key, val || ""));
       } else {
         dataToSend.append(field, value);
       }
 
       await apiRequest("/profile/update", "PUT", dataToSend, true);
       toast.success("✅ Data berhasil diperbarui!");
-      fetchProfile();
-    } catch (err) {
-      toast.error("❌ Gagal update");
+      // Refresh semua data terkait setelah update
+      setLoading(true);
+      await Promise.all([fetchProfile(), fetchCategories(), fetchWeblist()]);
+    } catch {
+      toast.error("❌ Gagal update data");
+    } finally {
+      setLoading(false);
+      setModalData(modal => ({ ...modal, isOpen: false }));
     }
   };
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  if (loading) {
-    return <p className="mt-20 text-center">Loading...</p>;
-  }
+  if (loading) return <p className="mt-20 text-center">Loading...</p>;
 
   return (
     <section className="relative w-full">
-      <ProfileDetails profile={profile} onEditField={handleOpenModal} fetchProfile={fetchProfile} apiRequest={apiRequest} />
+      <ProfileDetails
+        profile={profile}
+        onEditField={openEditModal}
+        fetchProfile={fetchProfile}
+        apiRequest={apiRequest}
+      />
       <WeblistSection
         weblist={weblist}
         categories={categories}
@@ -109,15 +135,20 @@ const Index = () => {
         detailData={detailData}
         setDetailData={setDetailData}
         apiRequest={apiRequest}
+        refreshData={() => {
+          fetchProfile();
+          fetchWeblist();
+          fetchCategories();
+        }}
       />
 
-      {showModal && (
+      {modalData.isOpen && (
         <EditFieldModal
-          field={activeField}
-          label={activeLabel}
-          initialValue={activeValue}
-          onClose={() => setShowModal(false)}
-          onSave={(field, value) => handleUpdateField(field, value)}
+          field={modalData.field}
+          label={modalData.label}
+          initialValue={modalData.value}
+          onClose={() => setModalData(modal => ({ ...modal, isOpen: false }))}
+          onSave={handleSaveField}
         />
       )}
     </section>
