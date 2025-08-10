@@ -1,21 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthApi } from '../../LoginRegister/api/AuthApi';
+import routes from '../../../routes';
 import { useNavigate } from 'react-router-dom';
-import routes
- from '../../../routes';
+import WeblistModalForm from './WeblistModalForm';
+import WeblistDetailModal from './WeblistDetailModal';
+import WeblistCarouselModal from './WeblistCarouselModal';
+
 const Index = () => {
   const { apiRequest } = useContext(AuthApi);
+  const navigate = useNavigate();
+
   const [weblist, setWeblist] = useState([]);
   const [category, setCategory] = useState([]);
-
-  const [title, setTitle] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [image, setImage] = useState(null);
-  const [editId, setEditId] = useState(null);
-
   const [popup, setPopup] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+
+  const [selectedWeb, setSelectedWeb] = useState(null);
+  const [modalType, setModalType] = useState(null); // 'form' | 'detail' | 'carousel'
 
   useEffect(() => {
     fetchWeblist();
@@ -40,48 +41,6 @@ const Index = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!title || !categoryId || (!editId && !image)) {
-    return setPopup('Isi semua form.');
-  }
-
-  setLoading(true);
-
-  const formData = new FormData();
-  formData.append('title', title);
-  formData.append('category_id', categoryId);
-  if (image) formData.append('image', image);
-
-  try {
-    if (editId) {
-
-await apiRequest(`my-weblist/${editId}`, 'PUT', formData, true);
-
-      setPopup('Berhasil update Weblist.');
-    } else {
-      await apiRequest('my-weblist', 'POST', formData, true);
-      setPopup('Berhasil tambah Weblist.');
-    }
-
-    resetForm();
-    fetchWeblist();
-  } catch {
-    setPopup('Gagal simpan Weblist.');
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  const handleEdit = (item) => {
-    setEditId(item.id);
-    setTitle(item.title);
-    setCategoryId(item.category_id);
-    setImage(null);
-  };
-
   const handleDelete = async (id) => {
     if (!window.confirm('Hapus Weblist ini?')) return;
     setLoading(true);
@@ -96,46 +55,19 @@ await apiRequest(`my-weblist/${editId}`, 'PUT', formData, true);
     }
   };
 
-  const resetForm = () => {
-    setEditId(null);
-    setTitle('');
-    setCategoryId('');
-    setImage(null);
-  };
-
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
-      <h2 className="mb-6 text-2xl font-bold text-center">🎨 Weblist Kamu</h2>
-
-      {popup && (
-        <div className="p-4 mb-4 text-purple-800 bg-purple-100 rounded">{popup}</div>
-      )}
-
-      <form onSubmit={handleSubmit} className="max-w-lg p-4 mx-auto mb-6 space-y-4 bg-white rounded shadow">
-<input
-  type="text"
-  placeholder="Judul"
-  value={title}
-  onChange={(e) => setTitle(e.target.value)}
-  className={`w-full p-2 border rounded ${!title.trim() && 'border-red-500'}`}
-/>
-
-<select
-  value={categoryId}
-  onChange={(e) => setCategoryId(e.target.value)}
-  className={`w-full p-2 border rounded ${!categoryId && 'border-red-500'}`}
->
-  <option value="">Pilih Kategori</option>
-  {category.map(cat => (
-    <option key={cat.id} value={cat.id}>{cat.name}</option>
-  ))}
-</select>
-
-        <input type="file" onChange={(e) => setImage(e.target.files[0])} className="w-full p-2 border rounded" />
-        <button type="submit" disabled={loading} className="w-full py-2 text-white bg-purple-500 rounded hover:bg-purple-600">
-          {editId ? 'Update' : 'Upload'}
+    <div className="min-h-screen p-6 pt-32 bg-gray-50">
+      <div className="flex justify-between mb-4">
+        <h2 className="text-2xl font-bold">🎨 Weblist Kamu</h2>
+        <button
+          onClick={() => { setSelectedWeb(null); setModalType('form'); }}
+          className="px-4 py-2 text-white bg-purple-500 rounded hover:bg-purple-600"
+        >
+          + Tambah Weblist
         </button>
-      </form>
+      </div>
+
+      {popup && <div className="p-3 mb-4 text-purple-800 bg-purple-100 rounded">{popup}</div>}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {weblist.map(w => (
@@ -144,13 +76,36 @@ await apiRequest(`my-weblist/${editId}`, 'PUT', formData, true);
             <h3 className="font-bold">{w.title}</h3>
             <p className="text-sm text-gray-500">{w.category?.name}</p>
             <div className="mt-2 space-x-2">
-              <button onClick={() => handleEdit(w)} className="text-blue-600">Edit</button>
+              <button onClick={() => { setSelectedWeb(w); setModalType('form'); }} className="text-blue-600">Edit</button>
               <button onClick={() => handleDelete(w.id)} className="text-red-600">Hapus</button>
-              <button onClick={() => navigate(routes.userWeblistEditDetail(w.id))} className="text-green-600">Detail</button>
+              <button onClick={() => { setSelectedWeb(w); setModalType('detail'); }} className="text-green-600">Detail</button>
+              <button onClick={() => { setSelectedWeb(w); setModalType('carousel'); }} className="text-orange-600">Carousel</button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Modal handler */}
+      {modalType === 'form' && (
+        <WeblistModalForm
+          close={() => setModalType(null)}
+          fetchWeblist={fetchWeblist}
+          category={category}
+          web={selectedWeb}
+        />
+      )}
+      {modalType === 'detail' && (
+        <WeblistDetailModal
+          close={() => setModalType(null)}
+          web={selectedWeb}
+        />
+      )}
+      {modalType === 'carousel' && (
+        <WeblistCarouselModal
+          close={() => setModalType(null)}
+          web={selectedWeb}
+        />
+      )}
     </div>
   );
 };

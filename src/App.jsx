@@ -22,10 +22,10 @@ import AdminProfile from "./components/AdminPage/AdminProfiles";
 import StartPage from "./components/UserPage/StartPage";
 import UserLayout from "./components/UserPage";
 import UserHomeWeblist from "./components/UserPage/UserHomeWeblist";
-import UserProfile from "./components/UserPage/UserProfiles";
+import UserProfile from "./components/UserPage/UserProfiles/Profiles";
 import UserPublicProfile from "./components/UserPage/UserProfiles/PublicProfile";
 import UserWebUp from "./components/UserPage/UserWebUps";
-import UserWebUpDetail from "./components/UserPage/UserWebUps/UserWebUpDetail";
+
 
 function AppContent() {
   const { isInitializing, loading } = useContext(AuthApi);
@@ -93,10 +93,6 @@ function AppContent() {
           <Route path="/user/user-profile/:id" element={<UserPublicProfile />} />
           <Route path={routes.userProfile} element={<UserProfile />} />
           <Route path={routes.userWeblist} element={<UserWebUp />} />
-          <Route
-            path={routes.userWeblistEditDetail()}
-            element={<UserWebUpDetail />}
-          />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

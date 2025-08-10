@@ -5,8 +5,6 @@ import {
   FaGlobe, FaEnvelope, FaMapMarkerAlt
 } from 'react-icons/fa';
 import { AnimatePresence, motion } from "framer-motion";
-import { Heart, Eye } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import UserWeblistDetail from "../UserWebList/UserWeblistDetails";
 const PublicProfile = () => {
   const { apiRequest } = useContext(AuthApi);
@@ -84,7 +82,7 @@ useEffect(() => {
   return (
     <section className="relative w-full">
       {/* HEADER */}
-      <div className="relative z-20 w-full pt-16 mx-auto bg-gradient-blue md:pt-24">
+      <div className="relative z-20 w-full pt-16 pb-10 mx-auto bg-gradient-blue md:pt-24">
         
         {/* Bagian Profil + Visual */}
         <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
@@ -156,7 +154,7 @@ useEffect(() => {
 <div className="w-full md:w-[50%] flex justify-center items-center relative">
   <div
     className="
-      w-full h-[300px] md:h-[480px]
+      w-full h-[300px] md:h-[450px]
       bg-white/10 rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden relative
     "
   >
@@ -181,9 +179,12 @@ useEffect(() => {
 
         </div>
 
+
+      </div>
+<div className="bg-gradient-white">
         {/* KATEGORI - Full width */}
         {weblist.length > 0 && (
-          <div className="pl-[5%]  flex flex-wrap gap-3 mt-2">
+          <div className="pl-[5%]  flex flex-wrap gap-3 ">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -200,11 +201,8 @@ useEffect(() => {
             ))}
           </div>
         )}
-      </div>
-
-
 {/* SECTION WEBLIST */}
-<div className="px-[5%] py-12 bg-gradient-white">
+<div className="px-[5%] py-12 ">
   {filteredWeblist.length === 0 ? (
     <p className="text-gray-500 font-poppins">Belum ada weblist yang diunggah.</p>
   ) : (
@@ -241,7 +239,7 @@ useEffect(() => {
       </AnimatePresence>
     </div>
   )}
-</div>      {/* Weblist Detail Modal */}
+</div>   </div>   {/* Weblist Detail Modal */}
       <UserWeblistDetail
         isOpen={!!selectedWeblist}
         onClose={() => {
