@@ -6,7 +6,7 @@ import WeblistModalForm from "../../UserWebUps/WeblistModalForm";
 import WeblistDetailModal from "../../UserWebUps/WeblistDetailModal";
 import WeblistCarouselModal from "../../UserWebUps/WeblistCarouselModal";
 import { toast } from "react-toastify";
-
+import { FiEdit, FiTrash, FiEye, FiImage } from "react-icons/fi";
 const WeblistSection = ({
   weblist,
   categories,
@@ -73,15 +73,19 @@ const WeblistSection = ({
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => {
-                setSelectedWeb(null);
-                setModalType("form");
-              }}
-              className="px-4 py-2 text-white bg-purple-500 rounded hover:bg-purple-600 whitespace-nowrap"
-            >
-              + Tambah Weblist
-            </button>
+<button
+  onClick={() => {
+    setSelectedWeb(null);
+    setModalType("form");
+  }}
+  className="relative inline-flex items-center px-6 py-3 mt-4 overflow-hidden text-sm text-white transition-all duration-300 border shadow-xl cursor-pointer rounded-3xl md:text-base border-white/30 group "
+>
+  <span className="absolute inset-0 w-0 h-0 bg-white rounded-full opacity-0 transition-all duration-700 ease-out transform group-hover:w-[50%] group-hover:h-[200%] group-hover:opacity-30 group-hover:scale-150 drop-shadow-[0_0_8px_#A78BFA]" />
+  <span className="relative z-10 flex items-center gap-2 text-sm font-poppins">
+    + Tambah Weblist
+  </span>
+</button>
+
           </div>
         )}
 
@@ -101,60 +105,77 @@ const WeblistSection = ({
                     exit={{ opacity: 0, y: -30 }}
                     transition={{ duration: 0.4 }}
                     className="flex flex-col overflow-hidden text-black transition-all duration-300 transform rounded-md cursor-pointer relative
-                    after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[2px] after:w-0 after:bg-black/50 after:transition-all after:duration-300 hover:after:w-full"
+                    after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[3px] after:w-0 after:bg-white after:transition-all after:duration-700 hover:after:w-full"
                   >
-                    <div
-                      onClick={() => handleOpenDetail(item.id)}
-                      className="relative w-full overflow-hidden aspect-[4/3] group"
-                    >
-                      <img
-                        src={item.image_path}
-                        alt={item.title}
-                        className="object-cover w-full h-full transition-transform duration-500 ease-out rounded-md group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 flex items-end transition-opacity duration-300 rounded-sm opacity-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent group-hover:opacity-100">
-                        <p className="w-1/2 px-4 pb-3 text-[15px] font-semibold text-white truncate font-poppins">
-                          {item.title || "Judul Website"}
-                        </p>
-                      </div>
-                    </div>
+<div
+  onClick={() => handleOpenDetail(item.id)}
+  className="relative w-full overflow-hidden aspect-[4/3] group cursor-pointer"
+>
+  <img
+    src={item.image_path}
+    alt={item.title}
+    className="object-cover w-full h-full transition-transform duration-500 ease-out rounded-md group-hover:scale-105"
+  />
 
-                    <div className="mt-10 space-x-2">
-                      <button
-                        onClick={() => {
-                          setSelectedWeb(item);
-                          setModalType("form");
-                        }}
-                        className="text-blue-600"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="text-red-600"
-                        disabled={loading}
-                      >
-                        Hapus
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedWeb(item);
-                          setModalType("detail");
-                        }}
-                        className="text-green-600"
-                      >
-                        Detail
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedWeb(item);
-                          setModalType("carousel");
-                        }}
-                        className="text-orange-600"
-                      >
-                        Carousel
-                      </button>
-                    </div>
+  {/* Judul tetap di sini, muncul saat hover */}
+  <div className="absolute inset-0 flex flex-col justify-end px-4 pb-3 transition-opacity duration-300 rounded-sm opacity-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent group-hover:opacity-100">
+    <p className="w-full mb-2 text-[15px] font-semibold text-white truncate font-poppins">
+      {item.title || "Judul Website"}
+    </p>
+  </div>
+
+  {/* Tombol selalu muncul, terpisah dari div judul */}
+  <div className="absolute flex space-x-2 z-9 top-2 right-2">
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedWeb(item);
+        setModalType("form");
+      }}
+      className="p-2 text-blue-600 border rounded-full border-white/50 bg-black/20 hover:bg-white/20"
+      title="Edit"
+    >
+      <FiEdit className="w-4 h-4" />
+    </button>
+
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        handleDelete(item.id);
+      }}
+      disabled={loading}
+      className="p-2 text-red-600 border rounded-full border-white/50 bg-black/20 hover:bg-white/20"
+      title="Hapus"
+    >
+      <FiTrash className="w-4 h-4" />
+    </button>
+
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedWeb(item);
+        setModalType("detail");
+      }}
+      className="p-2 text-green-600 border rounded-full border-white/50 bg-black/20 hover:bg-white/20"
+      title="Detail"
+    >
+      <FiEye className="w-4 h-4" />
+    </button>
+
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedWeb(item);
+        setModalType("carousel");
+      }}
+      className="p-2 text-orange-600 border rounded-full border-white/50 bg-black/20 hover:bg-white/20"
+      title="Carousel"
+    >
+      <FiImage className="w-4 h-4" />
+    </button>
+  </div>
+</div>
+
                   </motion.div>
                 ))}
               </AnimatePresence>

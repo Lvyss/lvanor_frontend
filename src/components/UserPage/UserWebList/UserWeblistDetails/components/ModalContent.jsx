@@ -1,6 +1,8 @@
 // ModalContent.jsx
 import { useEffect, useRef, useState } from "react";
-import { Mail, Bookmark, Heart } from "lucide-react";
+import { Bookmark, Heart } from "lucide-react";
+import { FaMapMarkerAlt
+} from 'react-icons/fa';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -39,7 +41,7 @@ const ModalContent = ({ data }) => {
     >
       <div className="bg-[linear-gradient(to_top,_rgb(99,144,204),_rgba(193,206,229,1))] pb-10  pt-14">
 
-        <h2 className="md:pr-[20%] md:pl-[20%] pr-[10%] pl-[10%] w-full text-2xl text-gray-900 break-words font-poppins">
+        <h2 className="md:pr-[20%] md:pl-[20%] pr-[10%] pl-[10%] w-full text-3xl font-bold text-blue-950 break-words font-poppins">
           {data.title}
         </h2>
 
@@ -48,12 +50,13 @@ const ModalContent = ({ data }) => {
         <div
           className={`sticky top-0 z-50 pt-6 pb-4 transition-all duration-1000 ${
             scrolledHeader
-              ? "bg-white/100 bg-blur-sm shadow-sm"
+              ? "bg-white/50 bg-blur-xl shadow-xl"
               : "bg-transparent"
           }`}
         >
           <div className="flex flex-col md:mr-[20%] md:ml-[20%] mr-[10%] ml-[10%] justify-between gap-4 md:flex-row md:items-center">
             <div className="flex items-center gap-4">
+              <div className="hover-white-overlay">
               <img
                 src={data.user?.detail?.profile_picture || "/images/default-profile.png"}
                 alt={data.user?.detail?.profile_picture || "Uploader"}
@@ -62,28 +65,22 @@ const ModalContent = ({ data }) => {
                       navigate(`/user/user-profile/${data.user?.id}`);
                     }}
                 className="object-cover w-10 h-10 rounded-full"
-              />
+              /></div>
               <div className="text-sm">
-                <p className="font-semibold text-black">{data.user?.detail?.username}</p>
-                <p className="flex items-center gap-1 text-black">
-                  <Mail size={14} className="inline-block" />
-                  {data.user?.email || "design@example.com"}
-                </p>
+               
+                <p className="flex items-center gap-1 font-semibold text-blue-950 ">                
+                  {data.user?.detail?.full_name || "design@example.com"}
+                </p> <p className="font-semibold text-blue-950/90">@{data.user?.detail?.username}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="p-2 text-gray-500 border rounded-full hover:border-black hover:text-black">
-                <Heart size={18} />
-              </button>
-              <button className="p-2 text-gray-500 border rounded-full hover:border-black hover:text-black">
-                <Bookmark size={18} />
-              </button>
+
               <a
                 href={detail.website_link}
-                className="relative inline-flex items-center px-6 py-2 overflow-hidden text-sm text-white transition-all duration-300 bg-black border cursor-pointer rounded-3xl md:text-base border-white/30 group"
+                className="relative inline-flex items-center px-6 py-2 overflow-hidden text-sm text-white transition-all duration-300 border cursor-pointer bg-blue-950 rounded-3xl md:text-base border-white/30 group"
               >
-                <span className="absolute inset-0 w-0 h-0 bg-white rounded-full group-hover:w-[50%] group-hover:h-[500%] group-hover:opacity-30 transition-all duration-700 ease-out transform group-hover:scale-150 drop-shadow-[0_0_8px_#60A5FA]" />
-                <span className="relative z-10 flex items-center gap-2">
+                <span className="absolute inset-0 w-0 h-0 bg-white rounded-full group-hover:w-[50%] group-hover:h-[200%] group-hover:opacity-30 transition-all duration-700 ease-out transform group-hover:scale-150 drop-shadow-[0_0_8px_#60A5FA]" />
+                <span className="relative z-10 flex items-center gap-2 text-sm font-poppins">
                   <span>Kunjungi Demo</span>
                 </span>
               </a>
@@ -100,7 +97,7 @@ const ModalContent = ({ data }) => {
         </div>
 
         {/* Description */}
-        <div className="mt-8 md:mr-[20%] md:ml-[20%] mr-[10%] ml-[10%] space-y-4 font-poppins text-sm leading-relaxed text-gray-800">
+        <div className="mt-8 md:mr-[20%] md:ml-[20%] mr-[10%] ml-[10%] space-y-4 font-poppins text-sm leading-relaxed text-blue-950">
           <p>
             <strong>Derkripsi:</strong>
             <br /> {detail?.description || "Tidak ada deskripsi."}
@@ -137,7 +134,7 @@ const ModalContent = ({ data }) => {
 >        {/* Swiper */}
         {images.length > 0 && (
           <div className="mt-12 mb-16 md:mr-[20%] md:ml-[20%] mr-[10%] ml-[10%]">
-            <p className="mb-4 text-gray-800 text-md font-poppins">
+            <p className="mb-4 text-blue-950 text-md font-poppins">
               <strong>Tampilan Lainnya:</strong>
             </p>
             <Swiper
@@ -175,7 +172,7 @@ const ModalContent = ({ data }) => {
         )}
 
         {/* Footer Info */}
-        <div className=" mt-60 mb-60 pr-[10%] pl-[10%] text-center ">
+        <div className=" mt-60 mb-60 pr-[9%] pl-[10%] text-center ">
           <div className="flex items-center justify-center gap-6">
             <div className="flex-1 h-[2px] bg-white/50" />
             <img
@@ -189,18 +186,21 @@ const ModalContent = ({ data }) => {
             />
             <div className="flex-1 h-[2px] bg-white/50" />
           </div>
-          <h2 className="mt-4 text-gray-900 text-md font-poppins">
-            {data.user?.detail?.username || "Nama Pengguna"}
+          <h2 className="mt-4 font-bold text-blue-950 text-md font-poppins">
+            {data.user?.detail?.full_name || "Nama Pengguna"}
+          </h2>
+          <h2 className="mt-4 text-sm text-blue-950/90 font-poppins">
+            @{data.user?.detail?.username || "Nama Pengguna"}
           </h2>
           {detail?.website_link && (
             <a
               href={detail.website_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative inline-flex items-center px-6 py-3 mt-4 overflow-hidden text-sm text-white transition-all duration-300 bg-black border cursor-pointer rounded-3xl md:text-base border-white/30 group"
+              className="relative inline-flex items-center px-6 py-3 mt-4 overflow-hidden text-sm text-white transition-all duration-300 border cursor-pointer bg-blue-950 rounded-3xl md:text-base border-white/30 group"
             >
-              <span className="absolute inset-0 w-0 h-0 bg-white rounded-full group-hover:w-[50%] group-hover:h-[500%] group-hover:opacity-30 transition-all duration-700 ease-out transform group-hover:scale-150 drop-shadow-[0_0_8px_#60A5FA]" />
-              <span className="relative z-10 flex items-center gap-2">
+              <span className="absolute inset-0 w-0 h-0 bg-white rounded-full group-hover:w-[50%] group-hover:h-[200%] group-hover:opacity-30 transition-all duration-700 ease-out transform group-hover:scale-150 drop-shadow-[0_0_8px_#60A5FA]" />
+              <span className="relative z-10 flex items-center gap-2 text-sm font-poppins">
                 <span>Kunjungi Demo</span>
               </span>
             </a>

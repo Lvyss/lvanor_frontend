@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthApi } from "../../../LoginRegister/api/AuthApi";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import ProfileDetails from "./ProfileDetails";
 import WeblistSection from "./WeblistSection";
 import EditFieldModal from "./EditFieldModal";
@@ -49,7 +49,7 @@ const Index = () => {
 
       setProfile(filledProfile);
     } catch (error) {
-      console.error("❌ Gagal mengambil data profil publik:", error);
+      console.error(" Gagal mengambil data profil publik:", error);
       toast.error("Gagal mengambil data profil.");
     }
   };
@@ -92,28 +92,32 @@ const Index = () => {
     });
   };
 
-  // Handle saving updated field
-  const handleSaveField = async (field, value) => {
-    try {
-      const dataToSend = new FormData();
-      if (field === "social_links") {
-        Object.entries(value).forEach(([key, val]) => dataToSend.append(key, val || ""));
-      } else {
-        dataToSend.append(field, value);
-      }
+const handleSaveField = async (field, value) => {
 
-      await apiRequest("/profile/update", "PUT", dataToSend, true);
-      toast.success("✅ Data berhasil diperbarui!");
-      // Refresh semua data terkait setelah update
-      setLoading(true);
-      await Promise.all([fetchProfile(), fetchCategories(), fetchWeblist()]);
-    } catch {
-      toast.error("❌ Gagal update data");
-    } finally {
-      setLoading(false);
-      setModalData(modal => ({ ...modal, isOpen: false }));
+  try {
+    const dataToSend = new FormData();
+    if (field === "social_links") {
+      Object.entries(value).forEach(([key, val]) => dataToSend.append(key, val || ""));
+    } else {
+      dataToSend.append(field, value);
     }
-  };
+
+    await apiRequest("/profile/update", "PUT", dataToSend, true);
+    toast.success(" Data berhasil diperbarui!");
+
+    // Update state tanpa refetch
+    setProfile((prev) => ({
+      ...prev,
+      [field]: value
+    }));
+
+  } catch {
+    toast.error(" Gagal update data");
+  }
+  // jangan tutup modal otomatis di sini
+};
+
+
 
   if (loading) return <p className="mt-20 text-center">Loading...</p>;
 

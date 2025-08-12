@@ -24,6 +24,16 @@ const socialLinks = [
 const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
   const [isSplineLoading, setIsSplineLoading] = useState(false);
 
+  // State baru untuk popup pilihan sosial
+  const [isSocialChoiceOpen, setIsSocialChoiceOpen] = useState(false);
+
+  // Handle pilih sosial dari popup pilihan
+  const handleSocialChoice = (field) => {
+    setIsSocialChoiceOpen(false);
+    // Panggil onEditField dengan field sosial yang dipilih dan value saat ini
+    onEditField(field, socialLinks.find(s => s.field === field)?.label || field, profile[field] || "");
+  };
+
   const handleProfilePictureChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -42,7 +52,7 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
   };
 
   return (
-    <div className="relative z-20 w-full pt-16 pb-10 mx-auto bg-gradient-blue md:pt-24">
+    <div className="relative w-full pt-16 pb-10 mx-auto bg-gradient-blue md:pt-24">
       <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
         {/* Profil Kiri */}
         <div className="w-full pl-[5%] md:w-[45%] flex flex-col gap-1 text-white">
@@ -143,17 +153,9 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
               ) : null
             )}
 
+            {/* Tombol edit link sosial: buka popup pilihan */}
             <button
-              onClick={() =>
-                onEditField("social_links", "Link Sosial Media", {
-                  tiktok: profile.tiktok,
-                  github: profile.github,
-                  linkedin: profile.linkedin,
-                  instagram: profile.instagram,
-                  website: profile.website,
-                  email: profile.email,
-                })
-              }
+              onClick={() => setIsSocialChoiceOpen(true)}
               aria-label="Edit Social Links"
             >
               <FaPen className="cursor-pointer text-white/50 hover:text-white" />
@@ -195,6 +197,52 @@ const ProfileDetails = ({ profile, onEditField, fetchProfile, apiRequest }) => {
           </div>
         </div>
       </div>
+
+      {/* Popup Pilihan Sosial Links */}
+{isSocialChoiceOpen && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+    onClick={() => setIsSocialChoiceOpen(false)}
+  >
+        <div
+          className="w-full max-w-md p-10 italic text-white border shadow-lg bg-black/50 backdrop-blur-lg rounded-2xl border-white/20 font-poppins"
+
+      onClick={(e) => e.stopPropagation()}
+    >
+            <div className="mt-5 mb-5 text-center">
+              <h1 className="text-[30px] font-satoshi font-bold">Pilih Link Sosial</h1>
+            </div>
+            <div className="mt-4">
+      <ul className="grid grid-cols-3 gap-6 justify-items-center">
+        {socialLinks.map(({ field, Icon, label }) => (
+          <li key={field}>
+            <button
+              onClick={() => handleSocialChoice(field)}
+              title={label}
+              aria-label={`Edit ${label}`}
+              className="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden text-white transition-all duration-300 border shadow-xl cursor-pointer border-white/30 rounded-3xl group"
+            >
+              <span className="absolute inset-0 w-0 h-0 bg-white rounded-full opacity-0 transition-all duration-500 ease-out transform group-hover:w-[70%] group-hover:h-[70%] group-hover:opacity-30 group-hover:scale-150 drop-shadow-[0_0_8px_#A78BFA]" />
+              <Icon className="relative z-10 text-xl" />
+            </button>
+          </li>
+        ))}
+      </ul></div>
+                          <div className="flex items-center justify-center gap-3 mt-6">
+  <div className="flex-1 h-[1px] bg-white/50" />
+  <img
+    src="/images/logo.png"
+    alt="logo"
+    className="object-cover rounded-full w-7 h-7 animate-spin-slow"
+  />
+  <div className="flex-1 h-[1px] bg-white/50" />
+</div>
+    </div>
+    
+  </div>
+)}
+
+
     </div>
   );
 };

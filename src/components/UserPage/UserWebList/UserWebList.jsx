@@ -140,7 +140,7 @@ const UserWebList = () => {
               transition={{ duration: 0.4 }}
               onClick={() => handleOpenDetail(weblist.id)}
               className="flex flex-col overflow-hidden text-black transition-all duration-300 transform rounded-md cursor-pointer relative
-              after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[2px] after:w-0 after:bg-black/50 after:transition-all after:duration-300 hover:after:w-full"
+              after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-[1px] after:w-0 after:bg-white after:transition-all after:duration-700 hover:after:w-full"
             >
               <div className="relative w-full overflow-hidden aspect-[4/3] group">
                 <img
@@ -158,15 +158,18 @@ const UserWebList = () => {
               <div className="flex items-center justify-between py-2">
                 <div className="flex items-center space-x-2 overflow-hidden">
                   {/* 👇 Tambahkan navigasi ke halaman profil publik */}
-                  <img
-                    src={weblist.profile}
-                    alt={weblist.uploader}
-                    onClick={(e) => {
-                      e.stopPropagation(); // ✅ Agar tidak memicu detail modal
-                      navigate(`/user/user-profile/${weblist.user_id}`);
-                    }}
-                    className="object-cover w-6 h-6 rounded-full cursor-pointer hover:ring-2 hover:ring-invaPurple"
-                  />
+<div className="hover-white-overlay">
+  <img
+    src={weblist.profile}
+    alt={weblist.uploader}
+    onClick={(e) => {
+      e.stopPropagation();
+      navigate(`/user/user-profile/${weblist.user_id}`);
+    }}
+    className="object-cover w-6 h-6 rounded-full cursor-pointer"
+  />
+</div>
+
                   <div className="flex items-center gap-1">
                     <span className="text-[12px] font-medium text-black truncate font-poppins max-w-[100px]">
                       {weblist.uploader?.length > 18
@@ -176,13 +179,6 @@ const UserWebList = () => {
                   </div>
                 </div>
 
-                {/* Icons */}
-                <div className="flex items-center gap-1 text-xs text-gray-400">
-                  <Heart className="w-4 h-4 text-black" />
-                  <span className="text-black">0</span>
-                  <Eye className="w-4 h-4 ml-2 text-black" />
-                  <span className="text-black">0</span>
-                </div>
               </div>
             </motion.div>
           ))}

@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider, AuthApi } from "./components/LoginRegister/api/AuthApi";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { ClipLoader } from "react-spinners";
 import { useContext } from "react";
 import routes from "./routes";
+import { Toaster } from "react-hot-toast";
+
 import NotFound from "./components/NotFound";
 
 import PrivateRoute from "./components/LoginRegister/pages/components/PrivateRoute";
@@ -35,7 +35,7 @@ function AppContent() {
     return (
       
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-        <ClipLoader size={80} color="#6B46C1" />
+        <ClipLoader size={40} color="#6B46C1" />
       </div>
     );
   }
@@ -43,10 +43,12 @@ function AppContent() {
   return (
     
     <>
+          {/* Konten aplikasi kamu */}
+      <Toaster position="top-right" />
       {/* ⏳ Loader global ketika ada request berjalan */}
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-          <ClipLoader size={80} color="#6B46C1" />
+          <ClipLoader size={40} color="#6B46C1" />
         </div>
       )}
 
@@ -97,7 +99,6 @@ function AppContent() {
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      <ToastContainer />
     </>
   );
 }

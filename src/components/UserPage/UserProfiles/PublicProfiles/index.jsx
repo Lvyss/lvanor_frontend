@@ -152,7 +152,7 @@ const index = () => {
 
           {/* RIGHT - SPLINE */}
           <div className="w-full md:w-[50%] flex justify-center items-center relative">
-            <div className="w-full h-[300px] md:h-[450px] bg-white/10 rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden relative">
+            <div className="w-full h-[300px] md:h-[450px]  shadow-lg backdrop-blur-sm overflow-hidden relative">
               {isSplineLoading && (
                 <div className="flex items-center justify-center w-full h-full">
                   <div className="w-10 h-10 border-4 rounded-full border-white/30 border-t-white animate-spin" />
@@ -165,7 +165,7 @@ const index = () => {
                   transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}
                   src={profile.spline}
                   frameBorder="0"
-                  className="absolute top-0 left-0 w-full h-full md:rounded-2xl"
+                  className="absolute top-0 left-0 w-full h-full "
                   allow="autoplay; fullscreen"
                   onLoad={() => setIsSplineLoading(false)} // ✅ sinkron
                 />
