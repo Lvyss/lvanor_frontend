@@ -69,7 +69,10 @@ const Index = () => {
     try {
       const res = await apiRequest("category", "GET");
       // Tambahkan "All" di depan data kategori
-      setCategories(["All", ...res.data]);
+      setCategories([
+  "All", 
+  ...res.data.sort((a, b) => (a.name || a).localeCompare(b.name || b))
+]);
     } catch {
       toast.error("Gagal ambil kategori.");
     }
@@ -158,5 +161,8 @@ const handleSaveField = async (field, value) => {
     </section>
   );
 };
+
+
+
 
 export default Index;

@@ -2,15 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TitleText from "./Components/TitleText";
 import MenuText from "./Components/MenuText";
-import LoginLogoutButton from "./Components/LoginLogoutButton";
 import ToggleButton from "./Components/ToogleButton";
 import MobileMenu from "./Components/MobileMenu";
 import FloatingLogo from "./Components/FloatingLogo";
-import Login from "../../LoginRegister/pages/Login"; // ✅ Tambahan
-
-import { Link } from "react-router-dom";
 import { AuthApi } from "../../LoginRegister/api/AuthApi";
-import routes from "../../../routes";
+import {
+  FaUser
+} from "react-icons/fa";
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,19 +17,30 @@ const Index = () => {
   const [isLogoClicked, setIsLogoClicked] = useState(false);
   const [activePage, setActivePage] = useState("Beranda");
   const [timeoutId, setTimeoutId] = useState(null);
-  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-  const [showLoginPopup, setShowLoginPopup] = useState(false); // ✅ Tambahan
+  const [profilePic, setProfilePic] = useState(null);
 
-  const { auth, logout } = useContext(AuthApi);
+  const { apiRequest } = useContext(AuthApi);
+
+  // Ambil hanya profile_picture
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await apiRequest("profile", "GET");
+        setProfilePic(res.data?.detail?.profile_picture || null);
+      } catch (err) {
+        console.error("Gagal fetch profile:", err);
+        setProfilePic(null);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleScroll = () => {
     if (isMenuOpen) return;
 
     if (window.scrollY > lastScrollY) {
       clearTimeout(timeoutId);
-      const newTimeoutId = setTimeout(() => {
-        setShowNavbar(false);
-      }, 50);
+      const newTimeoutId = setTimeout(() => setShowNavbar(false), 50);
       setTimeoutId(newTimeoutId);
     } else {
       setShowNavbar(true);
@@ -51,11 +60,6 @@ const Index = () => {
     setIsMenuOpen(false);
   };
 
-  const handleLoginClick = () => {
-    setIsMenuOpen(false);
-    setShowLoginPopup(true); // ✅ Munculkan popup login
-  };
-
   const handleFloatingLogoClick = () => {
     setIsLogoClicked(true);
     setTimeout(() => {
@@ -64,27 +68,13 @@ const Index = () => {
     }, 500);
   };
 
-  const handleLogout = async () => {
-    await logout();
-    sessionStorage.setItem("showLogoutPopup", "true");
-    window.location.href = "/";
+  const handleProfileClick = () => {
+    window.location.href = "/user/profile";
   };
 
-  useEffect(() => {
-    const shouldShowPopup = sessionStorage.getItem("showLogoutPopup");
-    if (shouldShowPopup === "true") {
-      setShowLogoutPopup(true);
-    }
-  }, []);
-
-  const handleLogoutNavigate = () => {
-    setShowLogoutPopup(false);
-    sessionStorage.removeItem("showLogoutPopup");
-  };
 
   return (
     <>
-      {/* Navbar */}
       <AnimatePresence>
         {showNavbar && (
           <motion.nav
@@ -95,7 +85,7 @@ const Index = () => {
             transition={{ duration: 0.25 }}
             className="fixed top-0 z-50 w-full py-[4%] md:py-[1.5%] shadow-lg px-[5%] backdrop-blur-[5px] border-b border-white/20"
           >
-            {/* 🖥️ Desktop Layout */}
+            {/* Desktop */}
             <div className="items-center justify-between hidden w-full md:flex">
               <div className="flex items-center space-x-3 cursor-pointer font-antiqua">
                 <img
@@ -107,21 +97,21 @@ const Index = () => {
               </div>
 
               <div className="flex items-center space-x-8">
-                <MenuText
-                  activePage={activePage}
-                  setActivePage={setActivePage}
-                />
+                <MenuText activePage={activePage} setActivePage={setActivePage} />
               </div>
 
               <div className="flex items-center space-x-4">
-                {!auth.token ? (
-                  <LoginLogoutButton
-                    type="login"
-                    onClick={handleLoginClick} // ✅ popup
+                {profilePic ? (
+                  <img
+                    src={profilePic}
+                    alt="Profile"
+                    className="object-cover w-8 h-8 rounded-full cursor-pointer"
+                    onClick={handleProfileClick}
                   />
                 ) : (
-                  <LoginLogoutButton type="logout" onClick={handleLogout} />
+                  <FaUser />
                 )}
+
                 <ToggleButton
                   isOpen={isMenuOpen}
                   toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
@@ -129,7 +119,7 @@ const Index = () => {
               </div>
             </div>
 
-            {/* 📱 Mobile Layout */}
+            {/* Mobile */}
             <div className="flex items-center justify-between w-full md:hidden">
               <div className="flex items-center space-x-3">
                 <ToggleButton
@@ -146,14 +136,15 @@ const Index = () => {
                 </div>
               </div>
 
-              <div>
-                {!auth.token ? (
-                  <LoginLogoutButton
-                    type="login"
-                    onClick={handleLoginClick} // ✅ popup
+              <div onClick={handleProfileClick}>
+                {profilePic ? (
+                  <img
+                    src={profilePic}
+                    alt="Profile"
+                    className="object-cover w-8 h-8 rounded-full cursor-pointer"
                   />
                 ) : (
-                  <LoginLogoutButton type="logout" onClick={handleLogout} />
+                  <FaUser />
                 )}
               </div>
             </div>
@@ -171,30 +162,6 @@ const Index = () => {
         show={!showNavbar && !isLogoClicked}
         onClick={handleFloatingLogoClick}
       />
-
-      {/* ✅ Login Popup */}
-      <Login
-        show={showLoginPopup}
-        onClose={() => setShowLoginPopup(false)}
-      />
-
-      {/* Logout Popup */}
-      {showLogoutPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="max-w-sm p-6 text-center bg-white rounded-lg shadow-lg">
-            <h3 className="mb-4 text-xl font-bold text-green-600">
-              Berhasil Logout
-            </h3>
-            <p className="mb-4">Anda telah berhasil keluar.</p>
-            <button
-              onClick={handleLogoutNavigate}
-              className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

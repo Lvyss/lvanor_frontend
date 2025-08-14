@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthApi } from "../../api/AuthApi";
 import { ClipLoader } from "react-spinners";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const PrivateRoute = ({ children, role }) => {
   const { auth, isInitializing, logout } = useContext(AuthApi);

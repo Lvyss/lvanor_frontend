@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useMemo } from "react";
 import AxiosClient from "./AxiosClient";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 export const AuthApi = createContext();
 
@@ -8,8 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({ token: "", user: null });
   const [loading, setLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // 🧠 Helpers
+  // Helpers
   const setTokenHeader = (token) => {
     AxiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   };
@@ -18,53 +19,60 @@ export const AuthProvider = ({ children }) => {
     delete AxiosClient.defaults.headers.common["Authorization"];
   };
 
-  // 🛑 Axios Interceptor
+  // Axios interceptor
   useEffect(() => {
     const interceptor = AxiosClient.interceptors.response.use(
-      (res) => res,
-      (err) => {
+      res => res,
+      err => {
+        if (isInitializing || isLoggingOut) return Promise.reject(err);
+
         if (err.response?.status === 401) {
-          logout({ redirect: false });
-          toast.error("Sesi kamu habis, silakan login ulang.");
+          if (!isLoggingOut) {
+            toast.error("Sesi kamu habis, silakan login ulang.");
+            logout({ redirect: false });
+          }
         } else if (err.response?.status === 403) {
           toast.error("Akses ditolak.");
         }
         return Promise.reject(err);
       }
     );
+
     return () => AxiosClient.interceptors.response.eject(interceptor);
-  }, []);
+  }, [isInitializing, isLoggingOut]);
 
-  // 🚀 On init: restore auth
+  // Restore auth on init
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    const user = JSON.parse(localStorage.getItem("authUser"));
+  const token = localStorage.getItem("authToken");
+  const user = JSON.parse(localStorage.getItem("authUser"));
 
-    if (token && user) {
-      setTokenHeader(token);
-      setAuth({ token, user });
-      validateToken(token);
-    } else {
-      setIsInitializing(false);
-    }
-  }, []);
+  if (token && user) {
+    setTokenHeader(token);
+    setAuth({ token, user });
+    validateToken(token); // kirim token langsung
+  } else {
+    setIsInitializing(false);
+  }
+}, []);
 
-  // 🔍 Validate Token (ping protected route)
-const validateToken = async () => {
+const validateToken = async (token) => {
+  if (!token) {
+    setIsInitializing(false);
+    return;
+  }
+
   try {
     const response = await AxiosClient.get("user/profile");
-    setAuth((prev) => ({ ...prev, user: response.data }));
+    setAuth(prev => ({ ...prev, user: response.data }));
   } catch (error) {
     console.warn("Token validation failed:", error.message);
-    // ❌ Jangan langsung logout. Biarin token tetap tersimpan.
-    // Atau bisa tampilkan pesan, tapi jangan hard logout otomatis.
   } finally {
     setIsInitializing(false);
   }
 };
 
 
-  // 📡 Public API
+  // Public API
   const publicRequest = async (endpoint, method = "GET", body = null) => {
     try {
       const config = {
@@ -82,59 +90,62 @@ const validateToken = async () => {
     }
   };
 
-  // 🔐 Authenticated API
-const apiRequest = async (url, method = "GET", data = {}, isFormData = false) => {
-  setLoading(true);
-  try {
-    const config = {
-      url,
-      method,
-      headers: {},
-    };
+  // Authenticated API
+  const apiRequest = async (url, method = "GET", data = {}, isFormData = false) => {
+    if (!auth.token) {
+      return null;
+    }
 
-    if (method !== "GET") {
-      if (isFormData) {
-        if (method === "PUT" || method === "DELETE") {
-          data.append("_method", method);
-          config.method = "POST"; // ⬅️ spoof via POST
+    setLoading(true);
+    try {
+      const config = { url, method, headers: {} };
+      if (method !== "GET") {
+        if (isFormData) {
+          if (["PUT", "DELETE"].includes(method)) {
+            data.append("_method", method);
+            config.method = "POST";
+          }
+          config.data = data;
+        } else {
+          config.headers["Content-Type"] = "application/json";
+          config.data = data;
         }
-        config.data = data;
-        // No manual Content-Type for FormData
-      } else {
-        config.headers["Content-Type"] = "application/json";
-        config.data = data;
       }
+      const response = await AxiosClient(config);
+      return response.data;
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
     }
-
-    const response = await AxiosClient(config);
-    return response.data;
-  } catch (error) {
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
-
-  // 🔐 Social Login
-  const socialLogin = async (data) => {
-    const response = await publicRequest("social-login", "POST", data);
-    if (response?.token && response?.user) {
-      localStorage.setItem("authToken", response.token);
-      localStorage.setItem("authUser", JSON.stringify(response.user));
-      setTokenHeader(response.token);
-      setAuth({ token: response.token, user: response.user });
-    }
-    return response;
   };
 
-  // 🔓 Logout
+  // Social login
+  const socialLogin = async (data) => {
+    setLoading(true);
+    try {
+      const response = await publicRequest("social-login", "POST", data);
+      if (response?.token && response?.user) {
+        localStorage.setItem("authToken", response.token);
+        localStorage.setItem("authUser", JSON.stringify(response.user));
+        setTokenHeader(response.token);
+        setAuth({ token: response.token, user: response.user });
+      }
+      return response;
+    } catch (err) {
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Logout
   const logout = async ({ redirect = true } = {}) => {
+    setIsLoggingOut(true);
+    setLoading(true);
     try {
       const endpoint = auth.user?.role === "admin" ? "admin/logout" : "logout";
-      await AxiosClient.post(endpoint);
+      if (auth.token) await AxiosClient.post(endpoint);
     } catch (error) {
       console.warn("Logout error:", error);
     } finally {
@@ -142,11 +153,12 @@ const apiRequest = async (url, method = "GET", data = {}, isFormData = false) =>
       localStorage.removeItem("authUser");
       clearTokenHeader();
       setAuth({ token: "", user: null });
+      setLoading(false);
+      setIsLoggingOut(false);
       if (redirect) window.location.href = "/";
     }
   };
 
-  // 🧠 Global Context Value
   const authValue = useMemo(() => ({
     auth,
     isAdmin: () => auth.user?.role === "admin",
@@ -161,4 +173,3 @@ const apiRequest = async (url, method = "GET", data = {}, isFormData = false) =>
 
   return <AuthApi.Provider value={authValue}>{children}</AuthApi.Provider>;
 };
-

@@ -77,7 +77,7 @@ const index = () => {
       if (filled.id) {
         const listResponse = await apiRequest(`public-weblist/${filled.id}`, 'GET');
         data = listResponse.data || [];
-        cats = ["All", ...new Set(data.map(item => item.category?.name).filter(Boolean))];
+        cats = ["All", ...Array.from(new Set(data.map(item => item.category?.name).filter(Boolean))).sort()];
       }
 
       // Simpan ke state
@@ -118,11 +118,11 @@ const index = () => {
   return (
     <section className="relative w-full">
       {/* HEADER */}
-      <div className="relative z-20 w-full pt-16 pb-10 mx-auto bg-gradient-blue md:pt-24">
+      <div className="relative w-full pt-16 pb-10 mx-auto bg-gradient-blue md:pt-24">
         <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
           
           {/* LEFT - PROFILE */}
-          <div className="w-full pl-[5%] md:w-[50%] flex flex-col gap-1 text-white">
+          <div className="w-full pl-[5%] md:w-[45%] flex flex-col gap-1 text-white">
             {profile.profile_picture
               ? <img src={profile.profile_picture} alt={profile.full_name}
                   className="object-cover w-24 h-24 border-2 rounded-full shadow-xl border-white/20" />
@@ -145,17 +145,18 @@ const index = () => {
               {profile.github && <SocialButton href={profile.github} icon={<FaGithub />} text="GitHub" />}
               {profile.linkedin && <SocialButton href={profile.linkedin} icon={<FaLinkedin />} text="LinkedIn" />}
               {profile.instagram && <SocialButton href={profile.instagram} icon={<FaInstagram />} text="Instagram" />}
-              {profile.website && <SocialButton href={profile.website} icon={<FaGlobe />} text="Website" />}
               {profile.email && <SocialButton href={`mailto:${profile.email}`} icon={<FaEnvelope />} text="Email" />}
+              {profile.website && <SocialButton href={profile.website} icon={<FaGlobe />} text="Portfolio Website" />}
+              
             </div>
           </div>
 
           {/* RIGHT - SPLINE */}
-          <div className="w-full md:w-[50%] flex justify-center items-center relative">
-            <div className="w-full h-[300px] md:h-[450px]  shadow-lg backdrop-blur-sm overflow-hidden relative">
+          <div className="w-full md:w-[50%] pr-[5%] flex justify-center items-center relative">
+            <div className="w-full h-[300px] md:h-[450px] rounded-2xl shadow-lg backdrop-blur-sm overflow-hidden relative">
               {isSplineLoading && (
                 <div className="flex items-center justify-center w-full h-full">
-                  <div className="w-10 h-10 border-4 rounded-full border-white/30 border-t-white animate-spin" />
+                  <div className="w-10 h-10 border-4 rounded-2xl border-white/30 border-t-white animate-spin" />
                 </div>
               )}
               {profile.spline && (
@@ -172,25 +173,29 @@ const index = () => {
               )}
             </div>
           </div>
+          
         </div>
       </div>
 
       {/* CATEGORY FILTER */}
       <div className="bg-gradient-white">
-        {weblist.length > 0 && (
-          <div className="pl-[5%] flex flex-wrap gap-3">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`relative z-10 px-5 py-2 rounded-full text-sm font-poppins transition-all duration-200
-                  ${selectedCategory === cat
-                    ? "text-white border border-white/30 shadow-xl"
-                    : "text-white hover:bg-white/10 hover:text-white"}`}
-              >
-                {cat}
-              </button>
-            ))}
+        {categories.length > 0 && (
+          <div className="pl-[5%] pr-[5%] flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap flex-grow gap-3">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id ?? cat.name ?? cat}
+                  onClick={() => setSelectedCategory(cat.name ?? cat)}
+                  className={`relative z-10 px-5 py-2 rounded-full text-sm font-poppins transition-all duration-200 ${
+                    selectedCategory === (cat.name ?? cat)
+                      ? "text-white border border-white/30 shadow-xl"
+                      : "text-white hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {cat.name ?? cat}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

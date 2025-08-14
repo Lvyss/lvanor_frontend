@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthApi } from "../../LoginRegister/api/AuthApi";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const Index = () => {
   const { loading, apiRequest } = useContext(AuthApi);

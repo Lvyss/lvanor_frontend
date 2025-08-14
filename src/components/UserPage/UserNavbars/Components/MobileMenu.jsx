@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthApi } from "../../../LoginRegister/api/AuthApi";
-import LoginLogoutButton from "./LoginLogoutButton";
+// import LoginLogoutButton from "./LoginLogoutButton";
 import routes from "../../../../routes";
 
 const MobileMenu = ({ isOpen, handleMenuClick, activePage }) => {
@@ -89,7 +89,7 @@ const MobileMenu = ({ isOpen, handleMenuClick, activePage }) => {
                 key={index}
                 variants={item}
                 whileHover={{ scale: 1.05 }}
-                className="relative group w-full text-center"
+                className="relative w-full text-center group"
               >
                 {menu.link.startsWith("#") ? (
                   <a
@@ -127,7 +127,7 @@ const MobileMenu = ({ isOpen, handleMenuClick, activePage }) => {
           </motion.ul>
 
           {/* Divider */}
-          <div className="my-6 w-full border-t border-white/40" />
+          <div className="w-full my-6 border-t border-white/40" />
 
           {/* Login/Logout */}
           <motion.div
@@ -136,13 +136,13 @@ const MobileMenu = ({ isOpen, handleMenuClick, activePage }) => {
             transition={{ delay: 0.4 }}
             className="w-full"
           >
-            {!auth.token ? (
+            {/* {!auth.token ? (
               <Link to={routes.login} onClick={handleMenuClick}>
                 <LoginLogoutButton type="login" />
               </Link>
             ) : (
               <LoginLogoutButton type="logout" onClick={handleLogout} />
-            )}
+            )} */}
           </motion.div>
         </motion.div>
       )}
