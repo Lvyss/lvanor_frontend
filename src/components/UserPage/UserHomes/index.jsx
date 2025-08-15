@@ -143,7 +143,7 @@ function LazyIframe({ src, placeholderDelay = 3000 }) {
 
 const RightColumn = memo(function RightColumn({ isLoaded }) {
   return (
-    <div className="w-full h-full md:w-[50%] md:relative absolute top-0 left-0 z-0 flex items-center justify-center">
+    <div className="w-full h-full md:w-[50%] md:relative absolute top-0 md:top-8 left-0 z-0 flex items-center justify-center">
       <LazyIframe src="https://my.spline.design/untitled-j1jPSS2tv357Jxqskcr4PXve/" />
     </div>
   );

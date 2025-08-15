@@ -77,7 +77,7 @@ const MenuText = ({ activePage, setActivePage }) => {
               className={`relative px-1 outline-none transition duration-300 italic
             ${
               activePage === menu.name
-                ? "text-[#5B73F2]"
+                ? "text-white"
                 : "group-hover:text-white"
             }
           `}
@@ -85,11 +85,11 @@ const MenuText = ({ activePage, setActivePage }) => {
               {menu.name}
 
               {/* Hover underline */}
-              <span className="absolute left-1/2 -bottom-1 w-0 h-[1px] bg-gradient-to-r from-[#8caeff] to-[#5B73F2] rounded-full opacity-0 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full group-hover:opacity-100"></span>
+              <span className="absolute left-1/2 -bottom-1 w-0 h-[1px] bg-white rounded-full opacity-0 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full group-hover:opacity-100"></span>
 
               {/* Active underline */}
               {activePage === menu.name && (
-                <span className="absolute left-1/2 -bottom-1 w-full h-[0.5px] bg-[#5B73F2] rounded-full transform -translate-x-1/2 drop-shadow-[0_0_4px_#5B73F2]" />
+                <span className="absolute left-1/2 -bottom-1 w-full h-[0.5px] bg-white rounded-full transform -translate-x-1/2 drop-shadow-[0_0_4px_#5B73F2]" />
               )}
             </button>
           </motion.li>
